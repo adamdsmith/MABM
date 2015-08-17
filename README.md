@@ -20,7 +20,7 @@ Basic operations are illustrated below. For details on the arguments and options
 
 ### Georeferencing bat detections
 
-Typically the `MABM_route` function will be used to join an Excel spreadsheet of bat detection classifications created by Bat Call Identification ([BCID](www.batcallid.com)) with a GPS fix collected simultaneously, in effect georeferencing identified calls, and prepare the bat call classifications for import in the the MABM program Access database. In addition to the delimited text file for database import, the function creates three ESRI shapefiles for detailed QA/QC of the bat survey route (e.g., in ArcMap): a point shapefile of the GPS log, a route (line) shapefile that connects all GPS fixes chronologically into a single shape, and a point shapefile of each georeferenced bat detection.
+Typically the `MABM_route` function will be used to join an Excel spreadsheet of bat detection classifications created by Bat Call Identification ([BCID](http://www.batcallid.com)) with a GPS fix collected simultaneously, in effect georeferencing identified calls, and prepare the bat call classifications for import in the the MABM program Access database. In addition to the delimited text file for database import, the function creates three ESRI shapefiles for detailed QA/QC of the bat survey route (e.g., in ArcMap): a point shapefile of the GPS log, a route (line) shapefile that connects all GPS fixes chronologically into a single shape, and a point shapefile of each georeferenced bat detection.
 
 This is the output produced when using the default options and can be accomplished by calling the function with no listed arguments:
 
