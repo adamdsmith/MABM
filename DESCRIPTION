@@ -8,7 +8,8 @@ Maintainer: Adam D. Smith <adam_d_smith@fws.gov>
 Description: Utility functions to georeference bat calls collected during mobile acoustical
     transects and assist with the quality control of collected data.  In this particular
     application, calls were recorded with the Anabat SD2 and the older Anabat SD1 (Titley
-    Scientific; http://www.titley-scientific.com/) with an attached GPS.
+    Scientific; http://www.titley-scientific.com/) with an attached GPS and identified using
+    the Bat Call Identification software (http://batcallid.com).
 Imports:
     dplyr (>= 0.4.2),
     ggmap (>= 2.4),
