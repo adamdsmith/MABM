@@ -157,7 +157,7 @@ plot_MABM_route <- function(type = "roadmap", spp = TRUE,
         } else {
             p <- p +
                 geom_point(data = bad_bats,
-                           shape = 23, size = 8)
+                           shape = 23, fill = "grey50", size = 8)
         }
 
         p <- p +
@@ -188,8 +188,8 @@ plot_MABM_route <- function(type = "roadmap", spp = TRUE,
                 bat_fillScale
         } else {
             p <- p +
-                geom_point(data = all_bats, aes(shape = as.factor(bad)), size = 8) +
-                scale_shape_manual("", values = c(21, 23))
+                geom_point(data = all_bats, aes(shape = as.factor(bad)), fill = "grey50", size = 8) +
+                scale_shape_manual("", values = c(21, 23), guide = "none")
         }
 
         p <- p +
@@ -219,7 +219,7 @@ plot_MABM_route <- function(type = "roadmap", spp = TRUE,
         } else {
             p <- p +
                 geom_point(data = good_bats,
-                           shape = 21, size = 8)
+                           shape = 21, fill = "grey50", size = 8)
         }
 
         # Add labels, if requested
