@@ -36,7 +36,7 @@
 #' @return a ggmap object (a classed raster object with a bounding box attribute)
 #' @import ggplot2
 #' @import ggmap
-#' @importFrom magrittr "%>%"
+#' @importFrom dplyr "%>%"
 #' @export
 
 plot_MABM_route <- function(type = "roadmap", spp = TRUE,
