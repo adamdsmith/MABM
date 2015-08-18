@@ -10,18 +10,17 @@ Description: Utility functions to georeference bat calls collected during mobile
     application, calls were recorded with the Anabat SD2 and the older Anabat SD1 (Titley
     Scientific; http://www.titley-scientific.com/) with an attached GPS and identified using
     the Bat Call Identification software (http://batcallid.com).
+Depends: R (>= 3.2.1)
 Imports:
     dplyr (>= 0.4.2),
     ggmap (>= 2.4),
     ggplot2 (>= 1.0.1),
     lubridate (>= 1.3.3),
-    magrittr (>= 1.5),
     plyr (>= 1.8.3),
     readr (>= 0.1.1),
     readxl (>= 0.1.0),
     rgdal (>= 1.0-4),
-    sp (>= 1.1-1),
-    stringr (>= 1.0.0),
+    sp (>= 1.1-1)
 License: MIT
 LazyData: TRUE
 URL: https://github.com/adamdsmith/MABM
