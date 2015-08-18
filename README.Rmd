@@ -20,7 +20,10 @@ This package contains functions for the creation, visualization, and quality ass
 
 ## Installing MABM
 
-To install the MABM package and access its functionality:
+The MABM package requires you to have [R](https://www.r-project.org/) (>= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/).  Both will require administrative priveleges but the installation of packages after this initial install will not.
+
+With R and Rtools installed, install and load the MABM package to access its functionality:
+
 ```
 install.packages("devtools")
 library("devtools")
