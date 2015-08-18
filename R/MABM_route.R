@@ -25,7 +25,7 @@
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
 #'  useful outputs.
-#' @importFrom magrittr "%>%"
+#' @importFrom dplyr "%>%"
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export
@@ -127,7 +127,7 @@ MABM_route <- function(for_import = TRUE, keep_output = FALSE) {
     # Restructure data
     # transform filename to call ID
     calls <- dplyr::mutate(calls,
-                           call_id = filename %>% stringr::str_sub(-8, -2) %>%
+                           call_id = filename %>% substr(5, 11) %>%
                                gsub("[.]", "", .) %>%
                                 as.integer())
 
