@@ -1,5 +1,3 @@
-    ## Loading required package: MABM
-
 MABM (Mobile Acoustical Bat Monitoring)
 =======================================
 
