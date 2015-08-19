@@ -25,7 +25,6 @@
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
 #'  useful outputs.
-#' @importFrom dplyr "%>%"
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export

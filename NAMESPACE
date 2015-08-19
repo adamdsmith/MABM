@@ -2,8 +2,6 @@
 
 export(MABM_route)
 export(plot_MABM_route)
-import(ggmap)
-import(ggplot2)
+import(leaflet)
 import(sp)
-importFrom(dplyr,"%>%")
 importFrom(rgdal,writeOGR)
