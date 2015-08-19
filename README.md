@@ -48,7 +48,9 @@ Once these are selected, the function creates a new directory in the same folder
 
 ### Visualizing the route and bat detections
 
-With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap.
+With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap. We use leaflet to facilitate interactivity.
+
+There is only a single argument --- how the user would like to define a "bad" GPS fix for a bat call detection (default is no GPS fix within 5 seconds of the detection).
 
 For the Crab Orchard route we georeference, we can visualize the route and bat detections using the default options with:
 
@@ -60,7 +62,7 @@ This will open a dialog box asking the user to locate the point shapefile create
 
 ![Choose the route shapefile](./README-figs/choose_shapefile.png)
 
-If the user requested that bat detections be plotted on the route (this is the default), a second dialog box asks for the location of the detection point shapefile (begins with "Calls").
+A second dialog box asks for the location of the detection point shapefile (begins with "Calls").
 
 ![Choose the calls shapefile](./README-figs/choose_calls_shapefile.png)
 
@@ -68,6 +70,6 @@ This produces the following plot of the route and bat detections:
 
 ![Crab Orchard route plot](./README-figs/plot_output.png)
 
-The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and it transitions to red at its completion. Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present.
+The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and it transitions to red at its completion. Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present. Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
 
-Bat detections are indicated by points along the route: circles and diamonds represent "good" and "bad" GPS fixes, respectively, as defined by the user (see `?plot_MABM_route`). Diamonds (i.e., "bad" fixes) are labeled with the number of seconds from the nearest (in time) GPS fix (again, see `?plot_MABM_route`). Points are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Every third point is labeled with its timestamp to provide some temporal context. Many of these features are customizable by the user; see `?plot_MABM_route`.
+Bat detections are indicated by bat icons along the route. Bat icons are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Users can toggle the visibility of "good" and "bad" GPS fixes (as defined by the user; see `?plot_MABM_route`), using the layers control feature in the upper right corner of the map. Clicking on a bat icon reveals some information about the detection (e.g., time, species, seconds from the nearest [in time] GPS fix).
