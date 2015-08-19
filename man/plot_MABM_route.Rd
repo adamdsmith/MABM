@@ -4,25 +4,9 @@
 \alias{plot_MABM_route}
 \title{Plot MABM route and, if requested, bat calls detected along the route.}
 \usage{
-plot_MABM_route(type = "roadmap", spp = TRUE, bats = c("all", "good",
-  "bad", "none"), labels = TRUE, bad_gps = 5)
+plot_MABM_route(bad_gps = 5)
 }
 \arguments{
-\item{type}{character string providing map theme. Reasonable choices include "terrain",
-"terrain-background", "satellite", "roadmap" (the default), and "hybrid" (google maps).}
-
-\item{spp}{logical indicating whether detections should be categorized by species;
-defaults to TRUE.}
-
-\item{bats}{character string indicating which, if any, bat calls to display along the
-MABM route.  Options available include "all" (default), "good", "bad", and "none".
-The distinction between "good" and "bad" calls depends on the user-specified
-\code{bad_gps} argument.}
-
-\item{labels}{logical (default = TRUE) indicating whether every third detection
-should be labeled with a time stamp to assist in visualizing the route. Ignored if the
-user opts not to add detections to the route.}
-
 \item{bad_gps}{integer indicating the absolute maximum number of seconds between a
 detected bat call and the nearest (in time) GPS location fix the user will consider as
 a "good" (usually interpreted "usable") georeference for a given bat call.  All calls
@@ -32,7 +16,7 @@ output under the column heading 'GPS_diff'; positive (negative) values indicate 
 detection occurred after (before) the associated GPS location.}
 }
 \value{
-a ggmap object (a classed raster object with a bounding box attribute)
+an HTML widget object
 }
 \description{
 This function plots a MABM route (from a shapefile created with \code{\link{MABM_route}})
