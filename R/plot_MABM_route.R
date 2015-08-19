@@ -73,29 +73,41 @@ plot_MABM_route <- function(bad_gps = 5) {
     batIcons <- makeBatIconList()
 
     # Create map
-    leaflet() %>%
+    p <- leaflet() %>%
         addTiles('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}') %>%
+        # Add GPS fixes and color with gradient
         addCircleMarkers(data = gps, radius = 4, stroke = F,
                          color = ~elapsedPal(t_elapsed),
                          popup = ~paste("Time:", time, "<br>",
                                         "Elapsed time:", t_elapsed, "min <br>",
                                         "Date:", format(as.Date(date), format = "%d %b %Y"))) %>%
+        # Add "good" (georeferenced) bat detections
         addMarkers(data = subset(calls, abs(GPS_diff) <= bad_gps), group = "Good GPS fix",
                    options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
                    popup = ~paste("Species:", spp, "<br>",
                                   "Time: ", time, "<br>",
                                   "Nearest GPS fix: ", GPS_diff, "sec"),
-                   icon = ~batIcons[spp]) %>%
-        addMarkers(data = subset(calls, abs(GPS_diff) > bad_gps), group = "Bad GPS fix",
-                   options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
-                   popup = ~paste("Species:", spp, "<br>",
-                                  "Time: ", time, "<br>",
-                                  "Nearest GPS fix: ", GPS_diff, "sec"),
-                   icon = ~batIcons[spp]) %>%
-        addLegend("topleft", pal = sppPal, values = calls@data$spp,
-                  title = "Species", opacity = 1) %>%
-        addLayersControl(overlayGroups = c("Good GPS fix", "Bad GPS fix"),
-                         options = layersControlOptions(collapsed = FALSE))
+                   icon = ~batIcons[spp])
+
+        # Add "bad" (georeferenced) bat detections if present
+        if (nrow(subset(calls, abs(GPS_diff) > bad_gps)) > 0) {
+            p <- p %>%
+                addMarkers(data = subset(calls, abs(GPS_diff) > bad_gps), group = "Bad GPS fix",
+                           options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
+                           popup = ~paste("Species:", spp, "<br>",
+                                          "Time: ", time, "<br>",
+                                          "Nearest GPS fix: ", GPS_diff, "sec"),
+                           icon = ~batIcons[spp])
+        }
+
+        # Add species legend and layer control
+        p <- p %>%
+            addLegend("topleft", pal = sppPal, values = calls@data$spp,
+                      title = "Species", opacity = 1) %>%
+            addLayersControl(overlayGroups = c("Good GPS fix", "Bad GPS fix"),
+                             options = layersControlOptions(collapsed = FALSE))
+
+        return(p)
 }
 
     #    addLegend("topleft", pal = elapsedPal, values = plot_dat$t_elapsed,
