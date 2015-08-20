@@ -22,11 +22,13 @@
 #'  time difference between a bat detection and the closest GPS location is noted in the
 #'  output under the column heading 'GPS_diff'; positive (negative) values indicate the
 #'  detection occurred after (before) the associated GPS location.
+#' @param gps character string that gives user the option to specify the path (full or
+#'  relative) to the GPS point shapefile rather than using a dialog box
 #' @return an HTML widget object
 #' @import leaflet
 #' @export
 
-plot_MABM_route <- function(bad_gps = 5) {
+plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
 
     #Create a custom color scale to consistently display species, if requested
     bat_fills <- c("orange3", "orange3", "sienna", "red2", "forestgreen", "forestgreen",
@@ -38,15 +40,20 @@ plot_MABM_route <- function(bad_gps = 5) {
     sppPal <- colorFactor(palette = bat_fills, domain = names(bat_fills))
 
     ## Pull in GPS route (SavedRoute)
-    gps <- tcltk::tk_choose.files(default = "*.shp",
-                                  caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).")
+    if (is.null(gps)) gps <- tcltk::tk_choose.files(default = "*.shp",
+                                                         caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).")
+    if (!is.character(gps) || !file.exists(gps)) stop("GPS file not specified correctly. Try again")
 
-    ## Pull in call file
+
+    ## Pull in call file automatically
+    # Assumes GPS and call shapefiles are named using `MABM_route` function convention and
+    # in the same directory
     # Extract file input directory
-    trunc <- sapply(gregexpr("/", gps), tail, 1)
-    in_dir <- substr(gps, 1, trunc)
-    calls <- tcltk::tk_choose.files(default = paste0(in_dir, "*.shp"),
-                                    caption = "Select bat call shapefile (e.g., 'Calls.shp').")
+    #trunc <- sapply(gregexpr("/", gps), tail, 1)
+    #in_dir <- substr(gps, 1, trunc)
+    #calls <- tcltk::tk_choose.files(default = paste0(in_dir, "*.shp"),
+    #                                caption = "Select bat call shapefile (e.g., 'Calls.shp').")
+    calls <- sub("SavedRoute", "Calls", gps)
 
     # Split GPS file name
     path_gps <- gps %>% strsplit(., "/") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
