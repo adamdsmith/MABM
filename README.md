@@ -48,7 +48,7 @@ Once these are selected, the function creates a new directory in the same folder
 
 ### Visualizing the route and bat detections
 
-With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap. We use the `[leaflet](http://rstudio.github.io/leaflet)` package to facilitate interactivity.
+With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap. We use the [leaflet package](http://rstudio.github.io/leaflet) package to facilitate interactivity.
 
 There is only one argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (default is no GPS fix within 5 seconds of the detection).
 
