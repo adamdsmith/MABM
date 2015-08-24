@@ -26,6 +26,7 @@
 #'  relative) to the GPS point shapefile rather than using a dialog box
 #' @return an HTML widget object
 #' @import leaflet
+#' @importFrom htmltools htmlEscape
 #' @export
 
 plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
@@ -43,7 +44,6 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
     if (is.null(gps)) gps <- tcltk::tk_choose.files(default = "*.shp",
                                                          caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).")
     if (!is.character(gps) || !file.exists(gps)) stop("GPS file not specified correctly. Try again")
-
 
     ## Pull in call file automatically
     # Assumes GPS and call shapefiles are named using `MABM_route` function convention and
@@ -91,9 +91,12 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
         # Add "good" (georeferenced) bat detections
         addMarkers(data = subset(calls, abs(GPS_diff) <= bad_gps), group = "Good GPS fix",
                    options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
-                   popup = ~paste("Species:", spp, "<br>",
-                                  "Time: ", time, "<br>",
-                                  "Nearest GPS fix: ", GPS_diff, "sec"),
+                   popup = ~sprintf("<b>Species: %s</b><hr noshade size='1'/>
+                                  Time: %s<br/>
+                                  Nearest GPS fix: %s sec</br>
+                                  ID probability: %3.0f%%",
+                                    htmlEscape(spp), htmlEscape(time),
+                                    htmlEscape(GPS_diff), htmlEscape(disc_prob * 100)),
                    icon = ~batIcons[spp])
 
         # Add "bad" (georeferenced) bat detections if present
@@ -101,9 +104,12 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
             p <- p %>%
                 addMarkers(data = subset(calls, abs(GPS_diff) > bad_gps), group = "Bad GPS fix",
                            options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
-                           popup = ~paste("Species:", spp, "<br>",
-                                          "Time: ", time, "<br>",
-                                          "Nearest GPS fix: ", GPS_diff, "sec"),
+                           popup = ~sprintf("<b>Species: %s</b><hr noshade size='1'/>
+                                  Time: %s<br/>
+                                  Nearest GPS fix: %s sec</br>
+                                  ID probability: %3.0f%%",
+                                    htmlEscape(spp), htmlEscape(time),
+                                    htmlEscape(GPS_diff), htmlEscape(disc_prob * 100)),
                            icon = ~batIcons[spp])
         }
 
@@ -116,7 +122,4 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
 
         return(p)
 }
-
-    #    addLegend("topleft", pal = elapsedPal, values = plot_dat$t_elapsed,
-    #              title = "Elapsed time (min)", opacity = 1)
 
