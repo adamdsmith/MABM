@@ -77,6 +77,10 @@ MABM_route <- function(for_import = TRUE, keep_output = FALSE) {
 #        arrange(dt) %>% # Sort chronologically
 #        mutate(order = 1:nrow(gps)) # Add order variable to facilitate QA/QC
 
+    # GPS quality control
+    # Sometimes GPS logs an incorrect date, although the time is correct
+    gps <- gps_QC(gps)
+
     # Use until new dplyr is released
     gps <- plyr::ddply(gps, plyr::.(date), plyr::mutate, # Doesn't like dplyr's mutate
                        lat = as.numeric(substring(lat, 2)),

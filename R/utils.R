@@ -1,3 +1,38 @@
+gps_QC <- function(gps) {
+
+    # Function for calculating modal value
+    Mode <- function(x) {
+        ux <- unique(x)
+        ux[which.max(tabulate(match(x, ux)))]
+    }
+
+    # Create temporary data frame
+    tmp <- data.frame(date = lubridate::ymd(gps$date),
+                      time = lubridate::hms(gps$time))
+
+    # Assume most fixes are correct, so we can get correct year from modal date
+    surv_year <- Mode(lubridate::year(tmp$date))
+
+    # Which rows are valid (i.e., collected in modal survey year)
+    good_dates <- which(lubridate::year(tmp$date) == surv_year)
+
+    # If survey spanned to dates (i.e., went past midnight), extract start date (minimum)
+    start_date <- min(tmp[good_dates,]$date)
+
+    # Fix records with bad date (i.e., did not occur during modal year)
+    fix_dates <- gps[-good_dates, ]
+    fix_dates <- dplyr::mutate(fix_dates,
+                               date = ifelse(as.numeric(substr(time, 1, 2)) >= 12,
+                                             as.character(start_date),
+                                             as.character(start_date + lubridate::days(1))))
+
+    # Now, put them back like a good guest
+    gps[-good_dates, ] <- fix_dates
+
+    return(gps)
+
+}
+
 makeBatIconList <- function(w = 64, h = 70, anchX = 1, anchY = 64) {
     iconList(CORA = makeIcon(system.file("icons", "Corynorhinus.png", package = "MABM"),
                              iconWidth = w, iconHeight = h,
