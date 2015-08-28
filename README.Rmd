@@ -65,15 +65,18 @@ Once these are selected, the function creates a new directory in the same folder
 
 With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap.  We use the [leaflet package](http://rstudio.github.io/leaflet) package to facilitate interactivity.
 
-There is only one argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (default is no GPS fix within 5 seconds of the detection).
+There are only two arguments the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (`badgps`; default is no GPS fix within 5 seconds of the detection) and a choice between two basemaps (`basemap`; terrain [default] and aerial imagery).
 
 For the Crab Orchard route we georeferenced, we can visualize the route and bat detections using the default options with: 
 
 ```{r plot_MABM, eval=FALSE}
 plot_MABM_route()
+
+# To get an aerial base map
+plot_MABM_route(basemap = "aerial")
 ```
 
-This will open a dialog box asking the user to locate the point shapefile created from the GPS log.  This should begin with "SavedRoute".
+Either of these function calls will open a dialog box asking the user to locate the point shapefile created from the GPS log.  This should begin with "SavedRoute".
 
 ![Choose the route shapefile](./README-figs/choose_shapefile.png) 
 
@@ -82,8 +85,6 @@ The location of the detection point shapefile (begins with "Calls") is inferred 
 This produces an interactive plot of the route and bat detections (view an interactive version of this README **[here](http://rpubs.com/adamsmith_fws/MABM_readme)**.):
 
 ![Output](./README-figs/plot_output.png) 
-
-  
 
 The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and transitions to red at its completion.  Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present.  Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
 

@@ -50,15 +50,18 @@ Once these are selected, the function creates a new directory in the same folder
 
 With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap. We use the [leaflet package](http://rstudio.github.io/leaflet) package to facilitate interactivity.
 
-There is only one argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (default is no GPS fix within 5 seconds of the detection).
+There are only two arguments the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (`badgps`; default is no GPS fix within 5 seconds of the detection) and a choice between two basemaps (`basemap`; terrain [default] and aerial imagery).
 
 For the Crab Orchard route we georeferenced, we can visualize the route and bat detections using the default options with:
 
 ``` r
 plot_MABM_route()
+
+# To get an aerial base map
+plot_MABM_route(basemap = "aerial")
 ```
 
-This will open a dialog box asking the user to locate the point shapefile created from the GPS log. This should begin with "SavedRoute".
+Either of these function calls will open a dialog box asking the user to locate the point shapefile created from the GPS log. This should begin with "SavedRoute".
 
 ![Choose the route shapefile](./README-figs/choose_shapefile.png)
 
