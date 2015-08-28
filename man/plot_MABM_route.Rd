@@ -4,7 +4,7 @@
 \alias{plot_MABM_route}
 \title{Plot MABM route and, if requested, bat calls detected along the route.}
 \usage{
-plot_MABM_route(bad_gps = 5, basemap = c("terrain", "aerial"), gps = NULL)
+plot_MABM_route(bad_gps = 5, gps = NULL)
 }
 \arguments{
 \item{bad_gps}{integer indicating the absolute maximum number of seconds between a
@@ -14,9 +14,6 @@ greater than this value will be recorded as having a "bad" georeference. The act
 time difference between a bat detection and the closest GPS location is noted in the
 output under the column heading 'GPS_diff'; positive (negative) values indicate the
 detection occurred after (before) the associated GPS location.}
-
-\item{basemap}{character string that allows the user to select between a
-terrain ("terrain"; default) or aerial imagery ("aerial")}
 
 \item{gps}{character string that gives user the option to specify the path (full or
 relative) to the GPS point shapefile rather than using a dialog box}
