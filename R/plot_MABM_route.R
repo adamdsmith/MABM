@@ -22,6 +22,8 @@
 #'  time difference between a bat detection and the closest GPS location is noted in the
 #'  output under the column heading 'GPS_diff'; positive (negative) values indicate the
 #'  detection occurred after (before) the associated GPS location.
+#' @param basemap character string that allows the user to select between a
+#'  terrain ("terrain"; default) or aerial imagery ("aerial")
 #' @param gps character string that gives user the option to specify the path (full or
 #'  relative) to the GPS point shapefile rather than using a dialog box
 #' @return an HTML widget object
@@ -29,7 +31,10 @@
 #' @importFrom htmltools htmlEscape
 #' @export
 
-plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
+plot_MABM_route <- function(bad_gps = 5, basemap = c("terrain", "aerial"),
+                            gps = NULL) {
+
+    basemap <- match.arg(basemap)
 
     #Create a custom color scale to consistently display species, if requested
     bat_fills <- c("orange3", "orange3", "sienna", "red2", "forestgreen", "forestgreen",
@@ -80,8 +85,14 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
     batIcons <- makeBatIconList()
 
     # Create map
+    if(basemap == "terrain") {
+        bm <- "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+    } else {
+        bm <- "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    }
+
     p <- leaflet() %>%
-        addTiles('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}') %>%
+        addTiles(bm) %>%
         # Add GPS fixes and color with gradient
         addCircleMarkers(data = gps, radius = 4, stroke = F,
                          color = ~elapsedPal(t_elapsed),
