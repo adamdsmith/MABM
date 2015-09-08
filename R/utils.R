@@ -80,3 +80,14 @@ makeBatIconList <- function(w = 64, h = 70, anchX = 1, anchY = 64) {
                              iconWidth = w, iconHeight = h,
                              iconAnchorX = anchX, iconAnchorY = anchY))
 }
+
+set_col_types <- function(obj, types){
+    for (i in 1:length(obj)){
+        FUN <- switch(types[i],
+                      character = as.character,
+                      numeric = as.numeric,
+                      integer = as.integer)
+        obj[,i] <- FUN(obj[,i])
+    }
+    obj
+}
