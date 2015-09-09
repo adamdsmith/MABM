@@ -91,3 +91,7 @@ set_col_types <- function(obj, types){
     }
     obj
 }
+
+move <- function(file, in_dir, out_dir) {
+    file.rename(paste(in_dir, file, sep = "/"), paste(out_dir, file, sep = "/"))
+}
