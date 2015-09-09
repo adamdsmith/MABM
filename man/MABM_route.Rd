@@ -2,12 +2,15 @@
 % Please edit documentation in R/MABM_route.R
 \name{MABM_route}
 \alias{MABM_route}
-\title{Associate bat calls with simultaneously collected GPS information.  Creates multiple
-shapefiles and a *.csv for incorporation in Access database.}
+\title{MABM shapefile creation, preparation for database import, and audio file scrubbing.}
 \usage{
-MABM_route(for_import = TRUE, keep_output = FALSE)
+MABM_route(scrub = TRUE, for_import = TRUE, keep_output = FALSE)
 }
 \arguments{
+\item{scrub}{logical indicating whether Anabat files (ending with '#'), if present, identified
+as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
+'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved}
+
 \item{for_import}{logical indicating whether the output *.csv file will be imported
 into the MABM Access database (default = TRUE).  See details.}
 
@@ -19,7 +22,10 @@ This function associates bat calls classified with Bat Call Identification (BCID
 \url{http::/www.batcallid.com}) software with simultaneously collected geographic
 location information.  For this application, bat calls were collected with (usually) an
 Anabat SD2 or the older Anabat SD1 (\url{https://www.titley-scientific.com}) and
-georeference by integrating the Anabat data logger, PDA and an external GPS.
+georeference by integrating the Anabat data logger, PDA and an external GPS.  From this
+association, it also creates multiple shapefiles and a *.csv for incorporation into the
+MABM Access database.  If requested, suspected noise files can be scrubbed (moved) to a
+new subdirectory.
 }
 \details{
 If \code{for_import = TRUE}, the function will rearrange the columns to match the expected

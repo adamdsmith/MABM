@@ -1,11 +1,13 @@
-#' Associate bat calls with simultaneously collected GPS information.  Creates multiple
-#' shapefiles and a *.csv for incorporation in Access database.
+#' MABM shapefile creation, preparation for database import, and audio file scrubbing.
 #'
 #' This function associates bat calls classified with Bat Call Identification (BCID;
 #' \url{http::/www.batcallid.com}) software with simultaneously collected geographic
 #' location information.  For this application, bat calls were collected with (usually) an
 #' Anabat SD2 or the older Anabat SD1 (\url{https://www.titley-scientific.com}) and
-#' georeference by integrating the Anabat data logger, PDA and an external GPS.
+#' georeference by integrating the Anabat data logger, PDA and an external GPS.  From this
+#' association, it also creates multiple shapefiles and a *.csv for incorporation into the
+#' MABM Access database.  If requested, suspected noise files can be scrubbed (moved) to a
+#' new subdirectory.
 #'
 #'  If \code{for_import = TRUE}, the function will rearrange the columns to match the expected
 #'  import format of the MABM database and replace \code{NA}s with blanks to play nicely with
@@ -21,6 +23,9 @@
 #'  user wants to conduct further investigations in R. To access this output, remember to
 #'  assign the function output to an R object.
 #'
+#' @param scrub logical indicating whether Anabat files (ending with '#'), if present, identified
+#'  as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
+#'  'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved
 #' @param for_import logical indicating whether the output *.csv file will be imported
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
@@ -28,7 +33,7 @@
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export
-MABM_route <- function(for_import = TRUE, keep_output = FALSE) {
+MABM_route <- function(scrub = TRUE, for_import = TRUE, keep_output = FALSE) {
 
     # If keeping output (keep_output = TRUE), override for_import
     if (keep_output) for_import <- FALSE
@@ -112,18 +117,6 @@ MABM_route <- function(for_import = TRUE, keep_output = FALSE) {
     # Replace blanks (i.e., "") with NAs
     calls[calls == ""] <- NA
 
-    # Assign column types
-    set_col_types <- function(obj, types){
-        for (i in 1:length(obj)){
-            FUN <- switch(types[i],
-                          character = as.character,
-                          numeric = as.numeric,
-                          integer = as.integer)
-            obj[,i] <- FUN(obj[,i])
-            }
-        obj
-    }
-
     calls <- set_col_types(calls, c(rep("character", 2), "numeric", "character", "numeric",
                                   "integer", "numeric"))
 
@@ -202,6 +195,33 @@ MABM_route <- function(for_import = TRUE, keep_output = FALSE) {
                paste(list.files(path = out_dir, pattern=".shp$"), collapse = "\n"),
                "\n\nText files:\n",
                list.files(path = out_dir, pattern=".csv$")))
+
+    if (scrub) {
+        # Get list of all call files in directory
+        all_calls <- grep("[0-9]{2}\\#", dir(in_dir), value = TRUE)
+
+        # Get good calls (from call ID file)
+        good_calls <- calls[, c("filename", "spp")]
+
+        # Filter good calls from all calls
+        bad_calls <- all_calls[!(all_calls %in% good_calls[, 1])]
+
+        # Checking necessity of scrubbing before doing it!
+        if (length(all_calls) == 0) {
+            cat("\n\nScrubbing summary:\nNo Anabat files detected in directory.  Scrubbing ignored.")
+        } else if (length(bad_calls) == 0) {
+            cat("\n\nScrubbing summary:\nNo suspected noise files in directory.  Scrubbing ignored.")
+        } else { # Yay, we get to scrub!!!
+            # Create scrubbed directory
+            scrub_dir <- paste0(in_dir, "scrubbed")
+            dir.create(scrub_dir)
+
+            # Move likely noise files
+            sapply(bad_calls, move, in_dir = in_dir, out_dir = scrub_dir)
+            cat(paste0("\n\nScrubbing summary:\nMoved ", length(bad_calls), " suspected noise files to:\n'",
+                       scrub_dir, "'"))
+        }
+    }
 
     if (keep_output) return(list(final_calls = calls, route_pt = gps_spdf,
                                  route_line = gps_sldf, call_pt = calls_spdf))
