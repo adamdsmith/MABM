@@ -1,3 +1,8 @@
+inst_pkg <- function(pkgs) {
+    pkg_miss <- pkgs[which(!pkgs %in% installed.packages()[, 1])]
+    if (length(pkg_miss) > 0) install.packages(pkg_miss)
+}
+
 gps_QC <- function(gps) {
 
     # Function for calculating modal value
@@ -94,4 +99,9 @@ set_col_types <- function(obj, types){
 
 move <- function(file, in_dir, out_dir) {
     file.rename(paste(in_dir, file, sep = "/"), paste(out_dir, file, sep = "/"))
+}
+
+sequence <- function(start, end) {
+    mat <- cbind(start, end)
+    unlist(apply(mat, 1, function(x) seq(x[1], x[2], 1)))
 }
