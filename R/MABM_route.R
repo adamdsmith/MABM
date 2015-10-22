@@ -26,7 +26,7 @@
 #' @param scrub logical indicating whether Anabat files (ending with '#'), if present, identified
 #'  as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
 #'  'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved
-#' @param route character string indicating the name used to file the created output.  Default (NULL)
+#' @param route_name character string indicating the name used to file the created output.  Default (NULL)
 #'  prompts the user to select from a list of all MABM routes.  This argument is particularly useful
 #'  when processing data external to the MABM program (e.g., data collected along a non-MABM route)
 #' @param for_import logical indicating whether the output *.csv file will be imported

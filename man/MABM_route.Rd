@@ -12,15 +12,15 @@ MABM_route(scrub = TRUE, route_name = NULL, for_import = TRUE,
 as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
 'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved}
 
+\item{route_name}{character string indicating the name used to file the created output.  Default (NULL)
+prompts the user to select from a list of all MABM routes.  This argument is particularly useful
+when processing data external to the MABM program (e.g., data collected along a non-MABM route)}
+
 \item{for_import}{logical indicating whether the output *.csv file will be imported
 into the MABM Access database (default = TRUE).  See details.}
 
 \item{keep_output}{logical (default = FALSE) that creates a list containing potentially
 useful outputs.}
-
-\item{route}{character string indicating the name used to file the created output.  Default (NULL)
-prompts the user to select from a list of all MABM routes.  This argument is particularly useful
-when processing data external to the MABM program (e.g., data collected along a non-MABM route)}
 }
 \description{
 This function associates bat calls classified with Bat Call Identification (BCID;
