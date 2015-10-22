@@ -4,7 +4,8 @@
 \alias{MABM_route}
 \title{MABM shapefile creation, preparation for database import, and audio file scrubbing.}
 \usage{
-MABM_route(scrub = TRUE, for_import = TRUE, keep_output = FALSE)
+MABM_route(scrub = TRUE, route_name = NULL, for_import = TRUE,
+  keep_output = FALSE)
 }
 \arguments{
 \item{scrub}{logical indicating whether Anabat files (ending with '#'), if present, identified
@@ -16,6 +17,10 @@ into the MABM Access database (default = TRUE).  See details.}
 
 \item{keep_output}{logical (default = FALSE) that creates a list containing potentially
 useful outputs.}
+
+\item{route}{character string indicating the name used to file the created output.  Default (NULL)
+prompts the user to select from a list of all MABM routes.  This argument is particularly useful
+when processing data external to the MABM program (e.g., data collected along a non-MABM route)}
 }
 \description{
 This function associates bat calls classified with Bat Call Identification (BCID;

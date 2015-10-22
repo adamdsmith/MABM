@@ -26,6 +26,9 @@
 #' @param scrub logical indicating whether Anabat files (ending with '#'), if present, identified
 #'  as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
 #'  'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved
+#' @param route character string indicating the name used to file the created output.  Default (NULL)
+#'  prompts the user to select from a list of all MABM routes.  This argument is particularly useful
+#'  when processing data external to the MABM program (e.g., data collected along a non-MABM route)
 #' @param for_import logical indicating whether the output *.csv file will be imported
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
@@ -33,7 +36,7 @@
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export
-MABM_route <- function(scrub = TRUE, for_import = TRUE, keep_output = FALSE) {
+MABM_route <- function(scrub = TRUE, route_name = NULL, for_import = TRUE, keep_output = FALSE) {
 
     # If keeping output (keep_output = TRUE), override for_import
     if (keep_output) for_import <- FALSE
@@ -43,10 +46,11 @@ MABM_route <- function(scrub = TRUE, for_import = TRUE, keep_output = FALSE) {
     #sites <- read.csv("../Data/site.list.csv")
     sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE)
     menu_items <- sort(paste0(sites$Site, ": (", sites$Location, ")"))
-    route_name <- tcltk::tk_select.list(menu_items, title="Choose the MABM route", multiple = FALSE)
-    # Drop the full location
-    route_name <- gsub(":.*$", "", route_name)
-
+    if (is.null(route_name)) {
+        route_name <- tcltk::tk_select.list(menu_items, title="Choose the MABM route", multiple = FALSE)
+        # Drop the full location
+        route_name <- gsub(":.*$", "", route_name)
+    }
     ## Retrieve GPS and BCID files
     ## Assumes BCID file is in same directory
     # GPS first
