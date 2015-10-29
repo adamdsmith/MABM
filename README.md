@@ -8,6 +8,13 @@ Installing MABM
 
 The MABM package requires you to have [R](https://www.r-project.org/) (\>= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Both will require administrative priveleges but the installation of packages after this initial install will not.
 
+\*\*Use `readr 0.1.1` package: The current version of `readr` package has introduce a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed.
+
+When you first open R, copy and paste these commands:
+
+    packageurl <- "http://cran.r-project.org/src/contrib/Archive/readr/readr_0.1.1.tar.gz"
+    install.packages(packageurl, repos=NULL, type="source")
+
 With R and Rtools installed, install and load the MABM package to access its functionality:
 
     install.packages("devtools") # Only the first time
