@@ -167,7 +167,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
 
     # Write final bat call data file with associated GPS information
     name <- paste0("Calls_", out_name, "_final.csv")
-    write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE)
+    if (for_import) write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE)
 
     ## Create point shapefile of all GPS locations (SavedRoute)
     gps_spdf <- gps
