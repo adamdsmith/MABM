@@ -20,7 +20,8 @@ Imports:
     readr (>= 0.1.1),
     readxl (>= 0.1.0),
     rgdal (>= 1.0-4),
-    sp (>= 1.1-1)
+    sp (>= 1.1-1),
+    stringi (>= 1.0-1)
 Suggests: xlsx (>= 0.5.7)
 License: MIT
 LazyData: TRUE
