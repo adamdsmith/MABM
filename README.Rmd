@@ -5,6 +5,8 @@ output:
     variant: markdown_github
 ---
 
+[![Build Status](https://travis-ci.org/adamdsmith/MABM.png)](https://travis-ci.org/adamdsmith/MABM)
+
 ```{r, echo = FALSE, message=FALSE}
 knitr::opts_chunk$set(
     message=FALSE,
