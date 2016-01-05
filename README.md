@@ -1,3 +1,8 @@
+USFWS Disclaimer
+================
+
+This United States Fish & Wildlife Service (USFWS) code is provided on an "as is" basis and the user assumes responsibility for its use. USFWS has relinquished control of the information and no longer has responsibility to protect the integrity , confidentiality, or availability of the information. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recomendation or favoring by USFWS. The USFWS seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity by USFWS or the United States Government.
+
 MABM (Mobile Acoustical Bat Monitoring)
 =======================================
 
@@ -14,7 +19,7 @@ With R and Rtools installed, install and load the MABM package to access its fun
     library("devtools")
     install_github("adamdsmith/MABM") # Only the first time
 
-**Use `readr 0.1.1` package: The current version of `readr` package has introduce a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed.**
+**Use `readr 0.1.1` package: The current version of `readr` package has introduced a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed.**
 
     packageurl <- "http://cran.r-project.org/src/contrib/Archive/readr/readr_0.1.1.tar.gz"
     install.packages(packageurl, repos=NULL, type="source")
