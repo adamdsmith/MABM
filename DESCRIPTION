@@ -1,8 +1,8 @@
 Package: MABM
 Type: Package
 Title: Functions for the USFWS Region 4's Mobile Acoustical Bat Monitoring (MABM) Program
-Version: 0.4.1
-Date: 2015-10-29
+Version: 0.5.0
+Date: 2016-01-06
 Author: Adam D. Smith <adam_d_smith@fws.gov>
 Maintainer: Adam D. Smith <adam_d_smith@fws.gov>
 Description: Utility functions to georeference bat calls collected during mobile acoustical
