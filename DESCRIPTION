@@ -19,8 +19,8 @@ Imports:
     plyr (>= 1.8.3),
     readr (>= 0.1.1),
     readxl (>= 0.1.0),
-    rgdal (>= 1.0-4),
     sp (>= 1.1-1),
+    rgdal (>= 1.0-4),
     stringi (>= 1.0-1)
 Suggests: xlsx (>= 0.5.7)
 License: MIT
