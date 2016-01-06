@@ -2,7 +2,6 @@ language: r
 sudo: required
 warnings_are_errors: true
 
-apt_packages:
- - r-cran-rjava
- - libgdal-dev 
- - libproj-dev
+r_binary_packages:
+ - rJava
+ - rgdal
