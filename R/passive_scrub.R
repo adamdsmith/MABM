@@ -79,8 +79,8 @@ passive_scrub <- function(calls = NULL) {
         } else { # Yay, we get to scrub!!!
             # Move likely noise files
             sapply(bad_calls, move, in_dir = paste0(in_dir, x), out_dir = scrub_dir)
-            cat(paste0(x, " -- Retained", length(good_calls), "call files; scrubbed", 
-                        length(bad_calls), " suspected noise files.\n\n"))
+            cat(paste(x, " -- Retained", length(good_calls), "call files; scrubbed", 
+                        length(bad_calls), "suspected noise files.\n\n"))
         }
 
     }))
