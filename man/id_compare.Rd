@@ -7,17 +7,17 @@
 id_compare()
 }
 \description{
-This function facilitates the comparison of bat call classification between EchoClass and BCID software.
-It prompts the user to identify the output .xls files from EchoClass 3.0 an BCID 2.7, assuming they
-result from the classification of the same suite of Anabat call files.
-It outputs a new .xls file ("ComEchoBCID") containing the comparison, sorted by classification
-agreement, to the same directory as the EchoClass and BCID inputs.
+This function facilitates the comparison of bat call classification between EchoClass and
+BCID software.  It prompts the user to identify the output .xls files from EchoClass 3.0
+and BCID 2.7, assuming they result from the classification of the same suite of Anabat call
+files.  It outputs a new .xls file ("ComEchoBCID") containing the comparison, sorted by
+classification agreement, to the same directory as the EchoClass and BCID inputs.
 }
 \details{
-This can also be used for calls recorded over multiple nights.  In these cases, BCID treats each
-calendar date separately, resulting in a slightly more complicated spreadsheet.  This function
-can handle these cases while \code{\link{MABM_route}} currently does not have this capability.
-EchoClass avoids this complication by producing a single list of call classifications, sorted by date,
-in its .xls output.
+This function can be used to compare calls recorded over multiple nights.  In these cases,
+BCID treats each calendar date separately, resulting in a slightly more complicated
+spreadsheet.  EchoClass avoids this complication by producing a single list of call
+classifications, sorted by date, in its .xls output.  For scrubbing call files associated
+with a single or multiple nights of recording, see \code{\link{scrub_noise}}.
 }
 
