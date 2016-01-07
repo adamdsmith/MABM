@@ -1,16 +1,15 @@
-#' Audio file scrubbing for (potentially) multiple night passive recording.
+#' Audio file scrubbing expected noise files one or more nights of recording.
 #'
 #' This function uses the classification output from Bat Call Identification (BCID;
 #'  \url{http::/www.batcallid.com}) software to scrub (move) suspected noise files into
-#'  a new subdirectory.  Unlike mobile data, which is typically collected in a single night,
-#'  passive data are often collected over multiple nights at a given location.  This function
-#'  is designed to handle multiple nights of recordings in the BCID output, unlike
+#'  a new subdirectory.  This function
+#'  is designed to handle multiple nights of recordings in the BCID output.
 #'
 #' @param calls optional character string to specify the path to the BCID classification
 #'  output file; default (`NULL`) allows the user to navigate to the file via a dialog box
 #' @export
 
-passive_scrub <- function(calls = NULL) {
+scrub_noise <- function(calls = NULL) {
 
     # Confirm that user to specified an appropriate route name
     if (is.null(calls)) {
@@ -33,7 +32,7 @@ passive_scrub <- function(calls = NULL) {
     call_starts <- grep("FILENAME", call_string) + 1 # Row after column headers; we have to make our own
     # This may need some modification in future if format changes...
     call_ends <- grep("IDENTIFICATION", call_string) - 2 # Two rows before identification summary
-    keep <- do.call(c, mapply(seq, call_starts, call_ends))
+    keep <- sequence(call_starts, call_ends)
     # Read file
     # This is all very hack-ish until readxl can incorporate the cellranger package
     calls <- readxl::read_excel(calls, sheet = 1, col_names = FALSE)[keep, 1:8]
@@ -79,8 +78,8 @@ passive_scrub <- function(calls = NULL) {
         } else { # Yay, we get to scrub!!!
             # Move likely noise files
             sapply(bad_calls, move, in_dir = paste0(in_dir, x), out_dir = scrub_dir)
-            cat(paste(x, "-- Retained", length(good_calls), "call files; scrubbed", 
-                        length(bad_calls), "suspected noise files.\n\n"))
+            cat(paste0(x, " -- Moved ", length(bad_calls), " suspected noise files to:\n'",
+                       scrub_dir, "'\n\n"))
         }
 
     }))
