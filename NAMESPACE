@@ -2,8 +2,8 @@
 
 export(MABM_route)
 export(id_compare)
-export(passive_scrub)
 export(plot_MABM_route)
+export(scrub_noise)
 import(leaflet)
 import(sp)
 importFrom(htmltools,htmlEscape)

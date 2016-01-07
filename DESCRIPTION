@@ -1,8 +1,8 @@
 Package: MABM
 Type: Package
 Title: Functions for the USFWS Region 4's Mobile Acoustical Bat Monitoring (MABM) Program
-Version: 0.5.0
-Date: 2016-01-06
+Version: 0.5.1
+Date: 2016-01-07
 Author: Adam D. Smith <adam_d_smith@fws.gov>
 Maintainer: Adam D. Smith <adam_d_smith@fws.gov>
 Description: Utility functions to georeference bat calls collected during mobile acoustical
@@ -21,9 +21,8 @@ Imports:
     readxl (>= 0.1.0),
     sp (>= 1.1-1),
     rgdal (>= 1.0-4),
-    stringi (>= 1.0-1)
 Suggests: xlsx (>= 0.5.7)
-License: MIT
+License: MIT + file LICENSE
 LazyData: TRUE
 URL: https://github.com/adamdsmith/MABM
 BugReports: https://github.com/adamdsmith/MABM/issues
