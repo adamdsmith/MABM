@@ -31,6 +31,8 @@
 
 plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
 
+    GPS_diff = t_seg = "." = NULL  # Variable "declaration" for R CMD check
+
     #Create a custom color scale to consistently display species, if requested
     bat_fills <- c("orange3", "orange3", "sienna", "red2", "forestgreen", "forestgreen",
                    "gray40", "gray40", "gray40", "gray40", "gray40", "gray40", "royalblue4",

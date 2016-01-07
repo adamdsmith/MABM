@@ -38,6 +38,8 @@
 #' @export
 MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_output = FALSE) {
 
+    lat = lon = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
+
     # If keeping output (keep_output = TRUE), override for_import
     if (keep_output) for_import <- FALSE
 
