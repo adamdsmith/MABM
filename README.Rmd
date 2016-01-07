@@ -1,19 +1,22 @@
 ---
 output:
-#  html_document
   md_document:
     variant: markdown_github
 ---
 
 [![Build Status](https://travis-ci.org/adamdsmith/MABM.png)](https://travis-ci.org/adamdsmith/MABM)
 
-```{r, echo = FALSE, message=FALSE}
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
 knitr::opts_chunk$set(
-    message=FALSE,
-    collapse = TRUE
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-",
+  message = FALSE
 )
 
-require(MABM)
+library(MABM)
 ```
 
 # USFWS Disclaimer
@@ -61,19 +64,19 @@ MABM_route()
 
 First a dialog box opens that asks the user to specify the MABM route from which the data were collected (NOTE: some "locations" have multiple routes, so choose wisely).  In this example, we select Big Lake NWR.  The abbreviation for the selected route (e.g., "BglNWR") will be used (with the date of the survey) to name the resulting files.
 
-![Choose your survey route](./README-figs/choose_route.png)  
+![Choose your survey route](./README-figs/README-choose_route.png)  
 
 A second dialog box prompts the user to specify the fixed width text file containing the logged GPS points.
 
-![Choose the GPS text file](./README-figs/choose_GPS.png)  
+![Choose the GPS text file](./README-figs/README-choose_GPS.png)  
 
 A third and final dialog box asks for the Microsoft Excel file produced by the Bat Call Identification software.
 
-![Choose the BCID Excel file](./README-figs/choose_BCID.png)  
+![Choose the BCID Excel file](./README-figs/README-choose_BCID.png)  
 
 Once these are selected, the function creates a new directory in the same folder as the GPS text file that contains a comma-delimited (*.csv) text file that can be directly imported into the MABM Access database and three shapefiles as described above.  Suspected noise files are scrubbed (moved) to a new subdirectory; if no Anabat files or suspected noise files are detected in the directory, scrubbing is ignored.  The user is alerted of this activity in the R console:
 
-![Finished!](./README-figs/all_done.png)  
+![Finished!](./README-figs/README-all_done.png)  
 
 ### Visualizing the route and bat detections
 
@@ -89,13 +92,13 @@ plot_MABM_route()
 
 This will open a dialog box asking the user to locate the point shapefile created from the GPS log.  This should begin with "SavedRoute".
 
-![Choose the route shapefile](./README-figs/choose_shapefile.png) 
+![Choose the route shapefile](./README-figs/README-choose_shapefile.png) 
 
 The location of the detection point shapefile (begins with "Calls") is inferred automatically based on the GPS point shapefile.  Thus it is assumed that shapefiles were created using the `MABM_route` function (or at least according to its conventions).
 
 This produces an interactive plot of the route and bat detections (view an interactive version of this README **[here](http://rpubs.com/adamsmith_fws/MABM_readme)**.):
 
-![Output](./README-figs/plot_output.png) 
+![Output](./README-figs/README-plot_output.png) 
 
 A choice of a terrain or aerial imagery basemap is available; aerial imagery has been toggled on in this example.
 
