@@ -1,3 +1,7 @@
+# MABM 0.5.1
+
+* Changed function `passive_scrub` to `scrub_noise` as it works generally with data collected mobile, active, or passive recording.
+
 # MABM 0.5
 
 * Added function (`passive_scrub`) use the classification output from Bat Call Identification (BCID) software to scrub suspected noise files into a new subdirectory.  This function can accomodated multiple nights of recording in the BCID output. (#4)
