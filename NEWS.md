@@ -1,3 +1,7 @@
+# MABM 0.5.2
+
+* Added argument `mult_folder` to `scrub_noise` to accommodate typically different file structure between single night and multiple nights of recording, see `?scrub_noise`.
+
 # MABM 0.5.1
 
 * Changed function `passive_scrub` to `scrub_noise` as it works generally with data collected mobile, active, or passive recording.
