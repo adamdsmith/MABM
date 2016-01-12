@@ -3,13 +3,12 @@ inst_pkg <- function(pkgs) {
     if (length(pkg_miss) > 0) install.packages(pkg_miss)
 }
 
-gps_QC <- function(gps) {
+Mode <- function(x) {
+    ux <- unique(x)
+    ux[which.max(tabulate(match(x, ux)))]
+}
 
-    # Function for calculating modal value
-    Mode <- function(x) {
-        ux <- unique(x)
-        ux[which.max(tabulate(match(x, ux)))]
-    }
+gps_QC <- function(gps) {
 
     # Create temporary data frame
     tmp <- data.frame(date = lubridate::ymd(gps$date),
@@ -33,6 +32,11 @@ gps_QC <- function(gps) {
 
     # Now, put them back like a good guest
     gps[-good_dates, ] <- fix_dates
+
+    # Expunge rows with missing lat/lon, time, or date info
+    # Should capture extra blank lines in the GPS file as well
+    anyNA <- apply(gps[, c("lat", "lon", "date", "time")], 1, function(row) any(is.na(row)))
+    gps <- gps[!anyNA, ]
 
     return(gps)
 
