@@ -16,16 +16,18 @@ Installing MABM
 
 The MABM package requires you to have [R](https://www.r-project.org/) (\>= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Both will require administrative priveleges but the installation of packages after this initial install will not.
 
-With R and Rtools installed, install and load the MABM package to access its functionality:
+With R and Rtools installed, it's simple to install and load the MABM package to access its functionality.
 
-    install.packages("devtools") # Only the first time
-    library("devtools")
-    install_github("adamdsmith/MABM") # Only the first time
+**NOTE: It is currently necessary to use version 0.1.1 of the `readr` package: The current version of `readr` has introduced a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed. Copying and pasting the following code into a *new* R session should do the trick.**
 
-**Use `readr 0.1.1` package: The current version of `readr` package has introduced a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed.**
+    # If devtools package is not installed
+    install.packages("devtools")
 
+    # Once devtools package is installed
+    devtools::install_github("adamdsmith/MABM") # Only the first time
     packageurl <- "http://cran.r-project.org/src/contrib/Archive/readr/readr_0.1.1.tar.gz"
     install.packages(packageurl, repos=NULL, type="source")
+
     # Now load MABM
     library("MABM")
 
@@ -87,3 +89,11 @@ A choice of a terrain or aerial imagery basemap is available; aerial imagery has
 The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and transitions to red at its completion. Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present. Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
 
 Bat detections are indicated by bat icons along the route. Bat icons are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Users can toggle the visibility of "good" and "bad" GPS fixes (as defined by the user; see `?plot_MABM_route`), using the layers control feature in the upper right corner of the map. Clicking on a bat icon reveals some information about the detection (e.g., time, species, seconds from the nearest [in time] GPS fix).
+
+### Comparing species classifications between BCID and [EchoClass](http://www.fws.gov/midwest/endangered/mammals/inba/surveys/pdf/EchoclassV3Instructions.pdf)
+
+The `id_compare` function facilitates the comparison of bat call classification between EchoClass and BCID software applied to the same suite of Anabat call files. The function generates a spreadsheet containing the comparison, sorted by classification agreement. See `?id_compare` for details.
+
+### General scrubbing of Anabat audio files
+
+The `scrub_noise` function can be used to separate Anabat audio files apparently devoid of bat calls (i.e., noise) from calls identified by BCID to contain a bat call (subject to the user's specifications in BCID). This can be useful when only a few calls are adrift in a sea of numerous noise files. The function works on BCID results applied to single or multiple nights. See `?scrub_noise` for more details.
