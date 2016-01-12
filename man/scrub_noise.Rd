@@ -4,10 +4,14 @@
 \alias{scrub_noise}
 \title{Audio file scrubbing expected noise files one or more nights of recording.}
 \usage{
-scrub_noise(calls = NULL)
+scrub_noise(mult_folder = TRUE, BCID = NULL)
 }
 \arguments{
-\item{calls}{optional character string to specify the path to the BCID classification
+\item{mult_folder}{logical (default = `TRUE`) indicating whether Anabat files can be
+found in separate nightly folders (use `TRUE`) or in the top-level directory (i.e.,
+the same directory as the BCID .xls file; use 'FALSE')}
+
+\item{BCID}{optional character string to specify the path to the BCID classification
 output file; default (`NULL`) allows the user to navigate to the file via a dialog box}
 }
 \description{

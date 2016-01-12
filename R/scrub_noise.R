@@ -5,14 +5,17 @@
 #'  a new subdirectory.  This function
 #'  is designed to handle multiple nights of recordings in the BCID output.
 #'
-#' @param calls optional character string to specify the path to the BCID classification
+#' @param mult_folder logical (default = `TRUE`) indicating whether Anabat files can be
+#'  found in separate nightly folders (use `TRUE`) or in the top-level directory (i.e.,
+#'  the same directory as the BCID .xls file; use 'FALSE')
+#' @param BCID optional character string to specify the path to the BCID classification
 #'  output file; default (`NULL`) allows the user to navigate to the file via a dialog box
 #' @export
 
-scrub_noise <- function(calls = NULL) {
+scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
 
     # Confirm that user to specified an appropriate route name
-    if (is.null(calls)) {
+    if (is.null(BCID)) {
         ## Retrieve BCID file
         calls <- tcltk::tk_choose.files(default = "*.xls",
                                         caption = "Select BCID output .xls file with bat call information.", multi = FALSE)
@@ -51,37 +54,68 @@ scrub_noise <- function(calls = NULL) {
 
     ## Create output (scrubbed) directory
     scrub_dir <- paste0(in_dir, "scrubbed")
-    dir.create(scrub_dir)
+    if (!dir.exists(scrub_dir)) dir.create(scrub_dir)
 
     nights <- unique(calls$start_night)
 
     cat("\nSCRUBBING SUMMARY:\n\n")
-    # Go through the directories
-    invisible(lapply(nights, function(x) {
 
-        tmp_calls <- calls[calls$start_night == x, ]
+    if (mult_folder) {
+        # Go through the directories
+        invisible(lapply(nights, function(x) {
 
-         #Get list of all call files in directory
-        all_calls <- grep("[0-9]{2}\\#", dir(paste0(in_dir, x)), value = TRUE)
+            tmp_calls <- calls[calls$start_night == x, ]
+
+            #Get list of all call files in directory
+            all_calls <- grep("[0-9]{2}\\#", dir(paste0(in_dir, x)), value = TRUE)
+
+            # Get good calls (from call ID file)
+            good_calls <- tmp_calls[, "filename"]
+
+            # Filter good calls from all calls
+            bad_calls <- all_calls[!(all_calls %in% good_calls)]
+
+            # Checking necessity of scrubbing before doing it!
+            if (length(all_calls) == 0) {
+                cat(x, "--", paste0("No Anabat files detected.\n",
+                                    "Check the appropriateness of the `mult_folder` argument.\n",
+                                    "Scrubbing ignored.\n\n"))
+            } else if (length(bad_calls) == 0) {
+                cat(x, "-- No suspected noise files in directory.  Scrubbing ignored.\n\n")
+            } else { # Yay, we get to scrub!!!
+                # Move likely noise files
+                sapply(bad_calls, move, in_dir = paste0(in_dir, x), out_dir = scrub_dir)
+                cat(paste(x, "-- Retained", length(good_calls), "call files; scrubbed",
+                          length(bad_calls), "suspected noise files.\n\n"))
+            }
+        }))
+
+    } else {
+        # Get list of all call files in directory
+        all_calls <- grep("[0-9]{2}\\#", dir(in_dir), value = TRUE)
 
         # Get good calls (from call ID file)
-        good_calls <- tmp_calls[, "filename"]
+        good_calls <- calls[, "filename"]
 
         # Filter good calls from all calls
         bad_calls <- all_calls[!(all_calls %in% good_calls)]
 
         # Checking necessity of scrubbing before doing it!
         if (length(all_calls) == 0) {
-            cat(x, "-- No Anabat files detected in directory.  Scrubbing ignored.\n\n")
+            cat(paste0("No Anabat files detected in directory.\n",
+                      "Check the appropriateness of the `mult_folder` argument.\n",
+                      "Scrubbing ignored.\n\n"))
         } else if (length(bad_calls) == 0) {
-            cat(x, "-- No suspected noise files in directory.  Scrubbing ignored.\n\n")
+            cat("No suspected noise files in directory.  Scrubbing ignored.\n\n")
         } else { # Yay, we get to scrub!!!
             # Move likely noise files
-            sapply(bad_calls, move, in_dir = paste0(in_dir, x), out_dir = scrub_dir)
-            cat(paste(x, "-- Retained", length(good_calls), "call files; scrubbed",
+            sapply(bad_calls, move, in_dir = in_dir, out_dir = scrub_dir)
+            cat(paste("Retained", length(good_calls), "call files; scrubbed",
                       length(bad_calls), "suspected noise files.\n\n"))
         }
+    }
 
-    }))
+    # Remove scrubbed folder if it wasn't used
+    if (length(grep("[0-9]{2}\\#", dir(scrub_dir))) == 0) unlink(scrub_dir, recursive = TRUE)
 
 }
