@@ -91,9 +91,9 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
         # Add GPS fixes and color with gradient
         addCircleMarkers(data = gps, radius = 4, stroke = F,
                          color = ~elapsedPal(t_elapsed),
-                         popup = ~paste("Time:", time, "<br>",
-                                        "Elapsed time:", t_elapsed, "min <br>",
-                                        "Date:", format(as.Date(date), format = "%d %b %Y"))) %>%
+                         popup = ~paste("Date:", format(as.Date(date), format = "%d %b %Y"), "<br>",
+                                        "Time:", time, "<br>",
+                                        "Elapsed time:", t_elapsed, "min <br>")) %>%
         # Add "good" (georeferenced) bat detections
         addMarkers(data = subset(calls, abs(GPS_diff) <= bad_gps), group = "Good GPS fix",
                    options = markerOptions(zIndexOffset = ~order, riseOnHover = TRUE),
@@ -123,6 +123,8 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
         p <- p %>%
             addLegend("topleft", pal = sppPal, values = calls@data$spp,
                       title = "Species", opacity = 1) %>%
+            addLegend("bottomleft", pal = elapsedPal, values = gps@data$t_elapsed,
+                      title = paste("Elapsed", "<br>", "time (min)"), opacity = 1) %>%
             addLayersControl(baseGroups = c("Terrain", "Aerial"),
                              overlayGroups = c("Good GPS fix", "Bad GPS fix"),
                              options = layersControlOptions(collapsed = FALSE))
