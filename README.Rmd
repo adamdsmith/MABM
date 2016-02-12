@@ -37,7 +37,7 @@ With R and Rtools installed, it's simple to install and load the MABM package to
 
 ```
 # If devtools package is not installed
-install.packages("devtools")
+install.packages("devtools", dependencies = TRUE)
 
 # Once devtools package is installed
 devtools::install_github("adamdsmith/MABM") # Only the first time

@@ -14,14 +14,14 @@ This package contains functions for the creation, visualization, and quality ass
 Installing MABM
 ---------------
 
-The MABM package requires you to have [R](https://www.r-project.org/) (\>= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Both will require administrative priveleges but the installation of packages after this initial install will not.
+The MABM package requires you to have [R](https://www.r-project.org/) (&gt;= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Both will require administrative priveleges but the installation of packages after this initial install will not.
 
 With R and Rtools installed, it's simple to install and load the MABM package to access its functionality.
 
 **NOTE: It is currently necessary to use version 0.1.1 of the `readr` package: The current version of `readr` has introduced a bug into one of its functions used by `MABM`. Thus, we need to make sure that an older version of `readr` is installed until this is fixed. Copying and pasting the following code into a *new* R session should do the trick.**
 
     # If devtools package is not installed
-    install.packages("devtools")
+    install.packages("devtools", dependencies = TRUE)
 
     # Once devtools package is installed
     devtools::install_github("adamdsmith/MABM") # Only the first time
@@ -88,7 +88,7 @@ A choice of a terrain or aerial imagery basemap is available; aerial imagery has
 
 The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and transitions to red at its completion. Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present. Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
 
-Bat detections are indicated by bat icons along the route. Bat icons are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Users can toggle the visibility of "good" and "bad" GPS fixes (as defined by the user; see `?plot_MABM_route`), using the layers control feature in the upper right corner of the map. Clicking on a bat icon reveals some information about the detection (e.g., time, species, seconds from the nearest [in time] GPS fix).
+Bat detections are indicated by bat icons along the route. Bat icons are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Users can toggle the visibility of "good" and "bad" GPS fixes (as defined by the user; see `?plot_MABM_route`), using the layers control feature in the upper right corner of the map. Clicking on a bat icon reveals some information about the detection (e.g., time, species, seconds from the nearest \[in time\] GPS fix).
 
 ### Comparing species classifications between BCID and [EchoClass](http://www.fws.gov/midwest/endangered/mammals/inba/surveys/pdf/EchoclassV3Instructions.pdf)
 
