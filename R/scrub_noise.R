@@ -19,7 +19,11 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
         ## Retrieve BCID file
         calls <- tcltk::tk_choose.files(default = "*.xls",
                                         caption = "Select BCID output .xls file with bat call information.", multi = FALSE)
+    } else {
+        calls <- BCID
     }
+
+    if(length(calls) == 0) return()
 
     if (!file.exists(calls) | !is.character(calls))
         stop("The file does not exist or the path was specified incorrectly.  Try again.")
@@ -35,7 +39,18 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
     call_starts <- grep("FILENAME", call_string) + 1 # Row after column headers; we have to make our own
     # This may need some modification in future if format changes...
     call_ends <- grep("IDENTIFICATION", call_string) - 2 # Two rows before identification summary
-    keep <- sequence(call_starts, call_ends)
+
+    # Accommodate nights with no "valid" calls
+    valid <- call_ends >= call_starts
+    call_starts <- call_starts[valid]
+    call_ends <- call_ends[valid]
+
+    if (all(length(call_starts) == 1, length(call_ends) == 1)) {
+        keep <- seq(call_starts, call_ends)
+    } else {
+        keep <- do.call(c, mapply(seq, call_starts, call_ends))
+    }
+
     # Read file
     # This is all very hack-ish until readxl can incorporate the cellranger package
     calls <- readxl::read_excel(calls, sheet = 1, col_names = FALSE)[keep, 1:8]
@@ -61,6 +76,13 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
     cat("\nSCRUBBING SUMMARY:\n\n")
 
     if (mult_folder) {
+
+        # Get all nights, including those with all noise based on BCID
+        nights <- list.files(path = in_dir, pattern="^\\d{8}$")
+
+        if (length(nights) == 0)
+            stop("No nightly folders detected. Perhaps you meant to use `mult_folder = FALSE`?")
+
         # Go through the directories
         invisible(lapply(nights, function(x) {
 
@@ -81,12 +103,21 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
                                     "Check the appropriateness of the `mult_folder` argument.\n",
                                     "Scrubbing ignored.\n\n"))
             } else if (length(bad_calls) == 0) {
-                cat(x, "-- No suspected noise files in directory.  Scrubbing ignored.\n\n")
+                scrub_txt <- paste(x, "-- No suspected noise files in directory.  Scrubbing ignored.\n\n")
+                cat(scrub_txt, file = paste0(scrub_dir, "/_scrubbing_report_",
+                                             format(Sys.Date(), format = "%d_%b_%Y"), ".txt"),
+                    append = TRUE)
+                cat(scrub_txt)
             } else { # Yay, we get to scrub!!!
                 # Move likely noise files
                 sapply(bad_calls, move, in_dir = paste0(in_dir, x), out_dir = scrub_dir)
-                cat(paste(x, "-- Retained", length(good_calls), "call files; scrubbed",
-                          length(bad_calls), "suspected noise files.\n\n"))
+                scrub_txt <- paste(x, "-- Retained", length(good_calls), "call files; scrubbed",
+                                   length(bad_calls), "suspected noise files.\n\n")
+                cat(scrub_txt, file = paste0(scrub_dir, "/_scrubbing_report_",
+                                             format(Sys.Date(), format = "%d_%b_%Y"), ".txt"),
+                      append = TRUE)
+                cat(scrub_txt)
+
             }
         }))
 
@@ -105,13 +136,21 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
             cat(paste0("No Anabat files detected in directory.\n",
                       "Check the appropriateness of the `mult_folder` argument.\n",
                       "Scrubbing ignored.\n\n"))
+
         } else if (length(bad_calls) == 0) {
-            cat("No suspected noise files in directory.  Scrubbing ignored.\n\n")
+            scrub_txt <- paste("No suspected noise files in directory.  Scrubbing ignored.\n\n")
+            cat(scrub_txt, file = paste0(in_dir, "/_scrubbing_report_",
+                                         format(Sys.Date(), format = "%d_%b_%Y"), ".txt"))
+            cat(scrub_txt)
         } else { # Yay, we get to scrub!!!
             # Move likely noise files
             sapply(bad_calls, move, in_dir = in_dir, out_dir = scrub_dir)
-            cat(paste("Retained", length(good_calls), "call files; scrubbed",
-                      length(bad_calls), "suspected noise files.\n\n"))
+            scrub_txt <- paste("Retained", length(good_calls), "call files; scrubbed",
+                               length(bad_calls), "suspected noise files.\n\n")
+            cat(scrub_txt, file = paste0(scrub_dir, "/_scrubbing_report_",
+                                         format(Sys.Date(), format = "%d_%b_%Y"), ".txt"))
+            cat(scrub_txt)
+
         }
     }
 
