@@ -1,5 +1,4 @@
 language: R
-language: java
 
 cache: packages
 sudo: required
