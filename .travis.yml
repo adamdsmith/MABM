@@ -1,5 +1,6 @@
 language: R
 cache: packages
+sudo: true
 
 cran: http://cran.rstudio.com
 
