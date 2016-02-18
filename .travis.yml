@@ -1,13 +1,16 @@
 language: R
+language: java
+
 cache: packages
-sudo: true
+sudo: required
 
 cran: http://cran.rstudio.com
 
-apt_packages: 
- - gdal-bin
- - libgdal1-dev
-
+r_binary_packages:
+ - rgdal
+ - rJava
+ - xlsxjars
+ 
 notifications:
   email:
     on_success: change
