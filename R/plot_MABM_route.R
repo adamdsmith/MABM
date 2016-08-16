@@ -77,7 +77,10 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
                               t_elapsed = round(cumsum(t_seg), 1))
 
     # Add route fill depicting elapsed time
-    elapsedPal <- colorNumeric(palette = c("#2166ac", "#b2182b"),
+    # Emulate viridis palette for color blindness
+    elapsedPal <- colorNumeric(palette = c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
+                                           "#2D708EFF", "#25858EFF", "#1E9B8AFF", "#2BB07FFF",
+                                           "#51C56AFF", "#85D54AFF", "#C2DF23FF", "#FDE725FF"),
                                domain = gps@data$t_elapsed)
 
     # Make bat icon list
