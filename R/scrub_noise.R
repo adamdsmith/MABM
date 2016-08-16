@@ -17,19 +17,19 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
     # Confirm that user to specified an appropriate route name
     if (is.null(BCID)) {
         ## Retrieve BCID file
-        calls <- tcltk::tk_choose.files(default = "*.xls",
-                                        caption = "Select BCID output .xls file with bat call information.", multi = FALSE)
+        calls <- utils::choose.files(default = "*.xls",
+                                     caption = "Select BCID output .xls file with bat call information.",
+                                     multi = FALSE)
+        if (length(calls) == 0) stop("Function cancelled.  No BCID output file selected.")
     } else {
         calls <- BCID
     }
-
-    if(length(calls) == 0) return()
 
     if (!file.exists(calls) | !is.character(calls))
         stop("The file does not exist or the path was specified incorrectly.  Try again.")
 
     # Extract file input directory
-    trunc <- sapply(gregexpr("/", calls), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", calls), tail, 1)
     in_dir <- substr(calls, 1, trunc)
 
     ## Call .xls file read and formatting

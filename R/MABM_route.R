@@ -49,23 +49,29 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
     sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE)
     menu_items <- sort(paste0(sites$Site, ": (", sites$Location, ")"))
     if (is.null(route_name)) {
-        route_name <- tcltk::tk_select.list(menu_items, title="Choose the MABM route", multiple = FALSE)
+        tcl("wm", "attributes", w1, topmost=TRUE)
+        route_name <- utils::select.list(menu_items, title="Choose the MABM route", multiple = FALSE, graphics = TRUE)
         # Drop the full location
         route_name <- gsub(":.*$", "", route_name)
     }
+    if (route_name == "") stop("You must select or provide a route name.")
+
     ## Retrieve GPS and BCID files
     ## Assumes BCID file is in same directory
     # GPS first
-    gps <- tcltk::tk_choose.files(default = "*.txt",
-                                  caption = "Select GPS text file.", multi = FALSE)
+    gps <- utils::choose.files(default = "*.txt",
+                               caption = "Select GPS text file.", multi = FALSE)
+    if (length(gps) == 0) stop("Function cancelled. No GPS text file selected.")
 
     # Extract file input directory
-    trunc <- sapply(gregexpr("/", gps), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", gps), tail, 1)
     in_dir <- substr(gps, 1, trunc)
 
     # Call file next
-    calls <- tcltk::tk_choose.files(default = paste0(in_dir, "*.xls"),
-                                    caption = "Select BCID output .xls file with bat call information.")
+    calls <- utils::choose.files(default = paste0(in_dir, "*.xls"),
+                                 caption = "Select BCID output .xls file with bat call information.",
+                                 multi = FALSE)
+    if (length(calls) == 0) stop("Function cancelled.  No BCID output file selected.")
 
     ## Initial GPS text file read and division into columns
     # Get number of lines to skip at beginning of GPS files

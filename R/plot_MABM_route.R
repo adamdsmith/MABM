@@ -43,8 +43,10 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
     sppPal <- colorFactor(palette = bat_fills, domain = names(bat_fills))
 
     ## Pull in GPS route (SavedRoute)
-    if (is.null(gps)) gps <- tcltk::tk_choose.files(default = "*.shp",
-                                                         caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).")
+    if (is.null(gps)) gps <- utils::choose.files(default = "*.shp",
+                                                 caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).",
+                                                 multi = FALSE)
+    if (length(gps) == 0) stop("Function cancelled.  No GPS shapefile selected.")
     if (!is.character(gps) || !file.exists(gps)) stop("GPS file not specified correctly. Try again")
 
     ## Pull in call file automatically
@@ -58,12 +60,12 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
     calls <- sub("SavedRoute", "Calls", gps)
 
     # Split GPS file name
-    path_gps <- gps %>% strsplit(., "/") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
-    shape_gps <- gps %>% strsplit(., "/") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
+    path_gps <- gps %>% strsplit(., "\\\\") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
+    shape_gps <- gps %>% strsplit(., "\\\\") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
 
     # Split call file name
-    path_calls <- calls %>% strsplit(., "/") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
-    shape_calls <- calls %>% strsplit(., "/") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
+    path_calls <- calls %>% strsplit(., "\\\\") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
+    shape_calls <- calls %>% strsplit(., "\\\\") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
 
     # Read shapefile(s)
     gps <- rgdal::readOGR(path_gps, shape_gps, verbose = FALSE, stringsAsFactors = FALSE)

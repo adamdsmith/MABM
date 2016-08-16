@@ -21,8 +21,10 @@ id_compare <- function() {
     inst_pkg("xlsx")
 
     ## EchoClass .xls file read and formatting
-    ECcalls <- tcltk::tk_choose.files(default = "*.xls",
-                                      caption = "Select EchoClass output .xls file with bat call information.")
+    ECcalls <- utils::choose.files(default = "*.xls",
+                                   caption = "Select EchoClass output .xls file with bat call information.",
+                                   multi = FALSE)
+    if (length(ECcalls) == 0) stop("Function cancelled.  No EchoClass output file selected.")
 
     # Get start/end rows of relevant call information in EchoClass .xls file
     EC_string <- do.call(paste0, readxl::read_excel(ECcalls, sheet = 1, col_names = FALSE))
@@ -43,12 +45,14 @@ id_compare <- function() {
     EC_calls$EC_spp <- gsub("Unknown", "UNKN", EC_calls$EC_spp)
 
     # Extract EC file input directory (assumes BCID is here too)
-    trunc <- sapply(gregexpr("/", ECcalls), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", ECcalls), tail, 1)
     in_dir <- substr(ECcalls, 1, trunc)
 
     ## BCID .xls file read and formatting
-    BCIDcalls <- tcltk::tk_choose.files(default = paste0(in_dir, "*.xls"),
-                                        caption = "Select BCID output .xls file with bat call information.")
+    BCIDcalls <- utils::choose.files(default = paste0(in_dir, "*.xls"),
+                                     caption = "Select BCID output .xls file with bat call information.",
+                                     multi = FALSE)
+    if (length(BCIDcalls) == 0) stop("Function cancelled.  No BCID output file selected.")
 
     # Get start/end rows of relevant call information in BCID .xls file
     BCID_string <- do.call(paste0, readxl::read_excel(BCIDcalls, sheet = 1, col_names = FALSE)) #concatenates all columns to simplify search
@@ -64,7 +68,6 @@ id_compare <- function() {
 
     # Get rid of some random retained tab characters
     BCID_calls <- plyr::colwise(function(x) gsub("\t", "", x, fixed = TRUE))(BCID_calls)
-
 
     ## Join BCID with EchoClass
     comparison <- dplyr::left_join(EC_calls, BCID_calls)
