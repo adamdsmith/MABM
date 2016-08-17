@@ -42,7 +42,7 @@ gps_QC <- function(gps) {
 
 }
 
-makeBatIconList <- function(w = 64, h = 70, anchX = 1, anchY = 64) {
+makeBatIconList <- function(w = 38, h = 21, anchX = 20, anchY = 20) {
     iconList(CORA = makeIcon(system.file("icons", "Corynorhinus.png", package = "MABM"),
                              iconWidth = w, iconHeight = h,
                              iconAnchorX = anchX, iconAnchorY = anchY),
