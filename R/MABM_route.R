@@ -49,7 +49,6 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
     sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE)
     menu_items <- sort(paste0(sites$Site, ": (", sites$Location, ")"))
     if (is.null(route_name)) {
-        tcl("wm", "attributes", w1, topmost=TRUE)
         route_name <- utils::select.list(menu_items, title="Choose the MABM route", multiple = FALSE, graphics = TRUE)
         # Drop the full location
         route_name <- gsub(":.*$", "", route_name)
@@ -79,8 +78,26 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
     n_skip <- grep("Latitude", readr::read_lines(gps))
 
     # Assign variable types and names; drop first and last columns
-    gps <- readr::read_fwf(gps, readr::fwf_empty(gps, skip = n_skip),
+    if (length(n_skip) == 1) {
+        gps <- readr::read_fwf(gps, readr::fwf_empty(gps, skip = n_skip),
                            col_types = "_ccncc_", skip = n_skip)
+    } else {
+        gps_string <- readr::read_lines(gps)
+        gps_start <- head(n_skip, -1) + 1 # Drop last entry
+        gps_end <- (grep("H R", gps_string) - 2)[-1] # Two rows before start of datum info
+        # Drop empty segments
+        keep <- which(gps_end >= gps_start)
+        gps_start <- gps_start[keep]
+        gps_end <- gps_end[keep]
+        if (length(gps_start) == 1 & length(gps_end) == 1) {
+            keep <- seq(gps_start, gps_end)
+        } else {
+            keep <- do.call(c, mapply(seq, gps_start, gps_end))
+        }
+        gps <- gps_string[keep] %>% paste(., collapse = "\n")
+        gps <- readr::read_fwf(gps, readr::fwf_empty(gps),
+                               col_types = "_ccncc_")
+    }
     names(gps) <- c("lat", "lon", "alt_m", "date", "time")
 
     # Restructure data
