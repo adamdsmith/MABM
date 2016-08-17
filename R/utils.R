@@ -11,8 +11,24 @@ Mode <- function(x) {
 gps_QC <- function(gps) {
 
     # Create temporary data frame
-    tmp <- data.frame(date = lubridate::ymd(gps$date),
+    tmp <- data.frame(date = strptime(gps$date, format = "%Y-%m-%d"),
                       time = lubridate::hms(gps$time))
+    tmp$start_date <- tmp$date - lubridate::days(ifelse(lubridate::hour(tmp$time) < 13, 1, 0))
+
+    ## Check for multiple (valid) start nights in GPS file...
+    # If so, prompt user to make a decision (bad GPS dates, i.e., 1969-12-31)
+    # are ignored at this point.
+    start_dates <- unique(tmp$start_date)
+    start_dates <- start_dates[!grepl("1969", as.character(start_dates))]
+
+    if (length(start_dates) > 1) {
+        use_date <- utils::select.list(start_dates,
+                                       title="\nMultiple start dates detected in GPS text file.  Choose one.",
+                                       multiple = FALSE)
+        keep_range <- range(which(tmp$start_date == use_date))
+        tmp <- tmp[keep_range[1]:keep_range[2],]
+        gps <- gps[keep_range[1]:keep_range[2],]
+    }
 
     # Assume most fixes are correct, so we can get correct year from modal date
     surv_year <- Mode(lubridate::year(tmp$date))
@@ -20,7 +36,7 @@ gps_QC <- function(gps) {
     # Which rows are valid (i.e., collected in modal survey year)
     good_dates <- which(lubridate::year(tmp$date) == surv_year)
 
-    # If survey spanned to dates (i.e., went past midnight), extract start date (minimum)
+    # If survey spanned two dates (i.e., went past midnight), extract start date (minimum)
     start_date <- min(tmp[good_dates,]$date)
 
     # Fix records with bad date (i.e., did not occur during modal year)
