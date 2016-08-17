@@ -57,20 +57,28 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
 
     ## Retrieve GPS and BCID files
     ## Assumes BCID file is in same directory
-    # GPS first
-    gps <- utils::choose.files(default = "*.txt",
-                               caption = "Select GPS text file.", multi = FALSE)
-    if (length(gps) == 0) stop("Function cancelled. No GPS text file selected.")
-
-    # Extract file input directory
-    trunc <- sapply(gregexpr("\\\\", gps), tail, 1)
-    in_dir <- substr(gps, 1, trunc)
-
-    # Call file next
-    calls <- utils::choose.files(default = paste0(in_dir, "*.xls"),
+    # Call file first
+    calls <- utils::choose.files(default = "*.xls",
                                  caption = "Select BCID output .xls file with bat call information.",
                                  multi = FALSE)
     if (length(calls) == 0) stop("Function cancelled.  No BCID output file selected.")
+
+    # Extract file input directory
+    trunc <- sapply(gregexpr("\\\\", calls), tail, 1)
+    in_dir <- substr(calls, 1, trunc)
+
+    # Assume GPS text file in same directory and called `gps.txt`
+    # Notify if this is so; prompt user to specify if `gps.txt` not found
+    if (file.exists(paste0(in_dir, "gps.txt"))) {
+        cat(paste("\nUsing 'gps.txt' found in same directory as",
+                  basename(calls), "as GPS source.\n\n"))
+        gps <- paste0(in_dir, "gps.txt")
+    } else {
+        gps <- utils::choose.files(default = paste0(in_dir, "*.txt"),
+                                   caption = "File 'gps.txt' not found. Please select GPS text file.",
+                                   multi = FALSE)
+    }
+    if (length(gps) == 0) stop("Function cancelled. No GPS text file selected.")
 
     ## Initial GPS text file read and division into columns
     # Get number of lines to skip at beginning of GPS files
@@ -192,7 +200,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
 
     # Write final bat call data file with associated GPS information
     name <- paste0("Calls_", out_name, "_final.csv")
-    if (for_import) write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE)
+    if (for_import) write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE,
+                              row.names = FALSE)
 
     ## Create point shapefile of all GPS locations (SavedRoute)
     gps_spdf <- gps
