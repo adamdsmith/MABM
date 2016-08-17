@@ -43,9 +43,13 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL) {
     sppPal <- colorFactor(palette = bat_fills, domain = names(bat_fills))
 
     ## Pull in GPS route (SavedRoute)
-    if (is.null(gps)) gps <- utils::choose.files(default = "*.shp",
-                                                 caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).",
-                                                 multi = FALSE)
+    if (is.null(gps)) {
+        gps <- utils::choose.files(default = "*.shp",
+                                   caption = "Select GPS shapefile (e.g., 'SavedRoute.shp).",
+                                   multi = FALSE)
+    } else {
+        gps <- normalizePath(gps)
+        }
     if (length(gps) == 0) stop("Function cancelled.  No GPS shapefile selected.")
     if (!is.character(gps) || !file.exists(gps)) stop("GPS file not specified correctly. Try again")
 
