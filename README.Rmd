@@ -13,8 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "README-",
-  message = FALSE
-)
+  message = FALSE)
 
 library(MABM)
 ```
@@ -30,19 +29,11 @@ This package contains functions for the creation, visualization, and quality ass
 
 The MABM package requires you to have [R](https://www.r-project.org/) (>= 3.2.1) installed on your computer as well as [Rtools](https://cran.r-project.org/bin/windows/Rtools/).  Both will require administrative priveleges but the installation of packages after this initial install will not.
 
-
 With R and Rtools installed, it's simple to install and load the MABM package to access its functionality.
-
-**NOTE: It is currently necessary to use version 0.1.1 of the `readr` package:  The current version of `readr` has introduced a bug into one of its functions used by `MABM`.  Thus, we need to make sure that an older version of `readr` is installed until this is fixed.  Copying and pasting the following code into a *new* R session should do the trick.**
 
 ```
 # If devtools package is not installed
 install.packages("devtools", dependencies = TRUE)
-
-# Once devtools package is installed
-devtools::install_github("adamdsmith/MABM") # Only the first time
-packageurl <- "http://cran.r-project.org/src/contrib/Archive/readr/readr_0.1.1.tar.gz"
-install.packages(packageurl, repos=NULL, type="source")
 
 # Now load MABM
 library("MABM")
@@ -66,23 +57,23 @@ First a dialog box opens that asks the user to specify the MABM route from which
 
 ![Choose your survey route](./README-figs/README-choose_route.png)  
 
-A second dialog box prompts the user to specify the fixed width text file containing the logged GPS points.
-
-![Choose the GPS text file](./README-figs/README-choose_GPS.png)  
-
-A third and final dialog box asks for the Microsoft Excel file produced by the Bat Call Identification software.
+A second dialog box prompts the user to specify the Microsoft Excel file produced by the Bat Call Identification software.  Note that each call to `MABM_route` begins in the current working directory, so changing the working directory (using `setwd`, for example) may save a fair amount of file hierarchy navigation if you'll be repeatedly running the function.
 
 ![Choose the BCID Excel file](./README-figs/README-choose_BCID.png)  
 
-Once these are selected, the function creates a new directory in the same folder as the GPS text file that contains a comma-delimited (*.csv) text file that can be directly imported into the MABM Access database and three shapefiles as described above.  Suspected noise files are scrubbed (moved) to a new subdirectory; if no Anabat files or suspected noise files are detected in the directory, scrubbing is ignored.  The user is alerted of this activity in the R console:
+By default, the function assumes the fixed width text file containing the logged GPS points is co-located with the BCID file and is called `gps.txt`.  If found, the user is notified that `gps.txt` was used as the GPS source.  If `gps.txt` is not found, the user is prompted by a third and final dialog box to identify the GPS text file.
+
+![Choose the GPS text file](./README-figs/README-choose_GPS.png)  
+
+Once these are selected, the function creates a new directory in the same folder as the BCID classification file that contains a comma-delimited (*.csv) text file that can be directly imported into the MABM Access database and three shapefiles as described above.  Suspected noise files are scrubbed (moved) to a new subdirectory called `scrubbed`; if no Anabat files or suspected noise files are detected in the directory, scrubbing is ignored.  The user is alerted of this activity in the R console:
 
 ![Finished!](./README-figs/README-all_done.png)  
 
 ### Visualizing the route and bat detections
 
-With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open ArcMap.  We use the [leaflet package](http://rstudio.github.io/leaflet) package to facilitate interactivity.
+With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open an alternative GIS program.  We use [leaflet](http://rstudio.github.io/leaflet) to facilitate interactivity.
 
-There is only a single argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (`badgps`; default is no GPS fix within 5 seconds of the detection).
+There is only a single argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (`badgps`).  By default, `plot_MABM_route` classifies as "bad" those bat detections without a GPS location within 5 seconds of the detection.
 
 For the Big Lake route we georeferenced, we can visualize the route and bat detections using the default options with: 
 
@@ -102,7 +93,7 @@ This produces an interactive plot of the route and bat detections (view an inter
 
 A choice of a terrain or aerial imagery basemap is available; aerial imagery has been toggled on in this example.
 
-The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix; the beginning of the route is blue and transitions to red at its completion.  Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present.  Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
+The route is shaded with a gradient indicating how much time (in minutes) has elapsed since the GPS acquired its first fix.  Large gaps in the route (e.g., due to GPS failure) should be apparent if they are present.  Clicking on a GPS point along the route provides some information regarding that point (e.g., date, time, elapsed time since survey start).
 
 Bat detections are indicated by bat icons along the route.  Bat icons are colored based on their species classification from the software; these colors will *not* change from route to route so learning them may facilitate interpretation in future plots. Users can toggle the visibility of "good" and "bad" GPS fixes (as defined by the user; see `?plot_MABM_route`), using the layers control feature in the upper right corner of the map.  Clicking on a bat icon reveals some information about the detection (e.g., time, species, seconds from the nearest [in time] GPS fix).
 
