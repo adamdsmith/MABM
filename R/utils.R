@@ -19,7 +19,7 @@ gps_QC <- function(gps) {
     # If so, prompt user to make a decision (bad GPS dates, i.e., 1969-12-31)
     # are ignored at this point.
     start_dates <- unique(tmp$start_date)
-    start_dates <- start_dates[!grepl("1969", as.character(start_dates))]
+    start_dates <- start_dates[!grepl(c("1969|1970"), as.character(start_dates))]
 
     if (length(start_dates) > 1) {
         use_date <- utils::select.list(start_dates,
