@@ -33,10 +33,15 @@
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
 #'  useful outputs.
+#' @param overwrite logical (default = FALSE) indicating whether to overwrite the output
+#'  directory and files, if they exist.
+#' @param plot logical (default = FALSE) indicating whether to plot the processed route using
+#'  \code{\link{plot_MABM_route}}
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export
-MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_output = FALSE) {
+MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
+                       keep_output = FALSE, overwrite = FALSE, plot = FALSE) {
 
     lat = lon = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
 
@@ -196,7 +201,12 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
     route_date <- min(gps$date) %>% as.character() %>% gsub("-", "", .)
     out_name <- paste(route_name, route_date, sep = "_")
     out_dir <- paste0(in_dir, out_name)
-    dir.create(out_dir)
+
+    if (!dir.exists(out_dir)) {
+        dir.create(out_dir)
+    } else if (!overwrite) {
+        stop("The output directory exists and you elected not to overwrite it.")
+    }
 
     # Write final bat call data file with associated GPS information
     name <- paste0("Calls_", out_name, "_final.csv")
@@ -259,6 +269,13 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE, keep_
             cat(paste0("\n\nScrubbing summary:\nMoved ", length(bad_calls), " suspected noise files to:\n'",
                        scrub_dir, "'"))
         }
+    }
+
+    if (plot) {
+        p <- plot_MABM_route(gps = list.files(path = out_dir,
+                                              pattern="SavedRoute.*\\.shp",
+                                              full.names = TRUE))
+        print(p)
     }
 
     if (keep_output) return(list(final_calls = calls, route_pt = gps_spdf,

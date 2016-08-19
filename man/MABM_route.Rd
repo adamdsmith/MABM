@@ -5,7 +5,7 @@
 \title{MABM shapefile creation, preparation for database import, and audio file scrubbing.}
 \usage{
 MABM_route(route_name = NULL, scrub = TRUE, for_import = TRUE,
-  keep_output = FALSE)
+  keep_output = FALSE, overwrite = FALSE, plot = FALSE)
 }
 \arguments{
 \item{route_name}{character string indicating the name used to file the created output.  Default (NULL)
@@ -21,6 +21,12 @@ into the MABM Access database (default = TRUE).  See details.}
 
 \item{keep_output}{logical (default = FALSE) that creates a list containing potentially
 useful outputs.}
+
+\item{overwrite}{logical (default = FALSE) indicating whether to overwrite the output
+directory and files, if they exist.}
+
+\item{plot}{logical (default = FALSE) indicating whether to plot the processed route using
+\code{\link{plot_MABM_route}}}
 }
 \description{
 This function associates bat calls classified with Bat Call Identification (BCID;
