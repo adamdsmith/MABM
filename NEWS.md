@@ -1,5 +1,8 @@
 # MABM 0.5.3
 
+* `MABM_route` now offers the options of:
+    - plotting the route (by internally calling `plot_MABM_route`; see `plot` argument
+    - overwriting previously created output; see `overwrite` argument
 * Addressed a few rare issues related to the format of the GPS text file, including multiple starts/stops within the file (#6) and multiple nights (#7).
 * Fix bug that reset time elapsed since start of route if the survey spanned midnight.
 * Changed bat icons (#8) that display in `plot_MABM_route()`; they're much prettier now. :)

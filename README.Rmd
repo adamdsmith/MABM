@@ -53,7 +53,7 @@ This is the output produced when using the default options and can be accomplish
 MABM_route()
 ```
 
-First a dialog box opens that asks the user to specify the MABM route from which the data were collected (NOTE: some "locations" have multiple routes, so choose wisely).  In this example, we select Big Lake NWR.  The abbreviation for the selected route (e.g., "BglNWR") will be used (with the date of the survey) to name the resulting files.
+First a dialog box opens that asks the user to specify the MABM route from which the data were collected (NOTE: some "locations" have multiple routes, so choose wisely).  In this example, we select Big Lake NWR.  The abbreviation for the selected route (e.g., "BglNWR") will be used (with the date of the survey) to name the resulting files. Alternatively, you can specify a custom route name (e.g., if route is not in list or for some other reason) and avoid the dialog box by passing a character string `route_name` to `MABM_route`: `MABM_route(route_name = "Custom_route")`.
 
 ![Choose your survey route](./README-figs/README-choose_route.png)  
 
@@ -71,7 +71,9 @@ Once these are selected, the function creates a new directory in the same folder
 
 ### Visualizing the route and bat detections
 
-With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open an alternative GIS program.  We use [leaflet](http://rstudio.github.io/leaflet) to facilitate interactivity.
+<font color="red"> NOTE: From 0.5.3, you can plot the newly created route and bat detections directly from `MABM_route` with `plot = TRUE` argument; see `?MABM_route`.</font>
+
+With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open an alternative GIS program.  We use [leaflet](http://rstudio.github.io/leaflet) to facilitate interactivity.  
 
 There is only a single argument the user is likely to specify --- how to define a "bad" GPS fix for a bat call detection (`badgps`).  By default, `plot_MABM_route` classifies as "bad" those bat detections without a GPS location within 5 seconds of the detection.
 
@@ -87,7 +89,7 @@ This will open a dialog box asking the user to locate the point shapefile create
 
 The location of the detection point shapefile (begins with "Calls") is inferred automatically based on the GPS point shapefile.  Thus it is assumed that shapefiles were created using the `MABM_route` function (or at least according to its conventions).
 
-This produces an interactive plot of the route and bat detections (view an interactive version of this README **[here](http://rpubs.com/adamsmith_fws/MABM_readme)**.):
+This produces an interactive plot of the route and bat detections (static view below):
 
 ![Output](./README-figs/README-plot_output.png) 
 
