@@ -1,15 +1,10 @@
-language: R
-
-cache: packages
-sudo: required
-
-cran: http://cran.rstudio.com
-
+language: r
+sudo: true
 r_binary_packages:
  - rgdal
  - rJava
  - xlsxjars
- 
+
 notifications:
   email:
     on_success: change
