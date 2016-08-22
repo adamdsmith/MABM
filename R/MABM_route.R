@@ -50,13 +50,15 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
 
     ## Prompt user to specify route name (site_Name in Access)
     # Load sites
-    #sites <- read.csv("../Data/site.list.csv")
-    sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE)
-    menu_items <- sort(paste0(sites$Site, ": (", sites$Location, ")"))
+    sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE,
+                      stringsAsFactors = FALSE)
+    colons <- ifelse(grepl("\\d", substr(sites$Site_abbr, nchar(sites$Site_abbr), nchar(sites$Site_abbr))),
+                     ": ", "")
+    menu_items <- sort(paste0(sites$Site, colons, sites$Site_desc, " (", sites$Site_abbr, ")"))
     if (is.null(route_name)) {
         route_name <- utils::select.list(menu_items, title="Choose the MABM route", multiple = FALSE, graphics = TRUE)
         # Drop the full location
-        route_name <- gsub(":.*$", "", route_name)
+        route_name <- gsub(".*\\(|\\)", "", route_name)
     }
     if (route_name == "") stop("You must select or provide a route name.")
 
