@@ -35,7 +35,8 @@ With R and Rtools installed, it's simple to install and load the MABM package to
 # If devtools package is not installed
 install.packages("devtools", dependencies = TRUE)
 
-# Now load MABM
+# Now install and load MABM
+devtools::install_github("adamdsmith/MABM")
 library("MABM")
 ```
 
@@ -53,7 +54,7 @@ This is the output produced when using the default options and can be accomplish
 MABM_route()
 ```
 
-First a dialog box opens that asks the user to specify the MABM route from which the data were collected (NOTE: some "locations" have multiple routes, so choose wisely).  In this example, we select Big Lake NWR.  The abbreviation for the selected route (e.g., "BglNWR") will be used (with the date of the survey) to name the resulting files. Alternatively, you can specify a custom route name (e.g., if route is not in list or for some other reason) and avoid the dialog box by passing a character string `route_name` to `MABM_route`: `MABM_route(route_name = "Custom_route")`.
+First a dialog box opens that asks the user to specify the MABM route from which the data were collected (NOTE: some "locations" have multiple routes, so choose wisely).  In this example, we select Big Lake NWR.  The abbreviation for the selected route (e.g., "BglNWR") will be used (with the date of the survey) to name the resulting files. Alternatively, you can specify a custom route name (e.g., if route is not in list or for some other reason) and avoid the dialog box by passing a character string `route_name`: `MABM_route(route_name = "Custom_route_name")`.
 
 ![Choose your survey route](./README-figs/README-choose_route.png)  
 
@@ -71,7 +72,7 @@ Once these are selected, the function creates a new directory in the same folder
 
 ### Visualizing the route and bat detections
 
-<font color="red"> NOTE: From 0.5.3, you can plot the newly created route and bat detections directly from `MABM_route` with `plot = TRUE` argument; see `?MABM_route`.</font>
+**From 0.5.3, you can plot the newly created route and bat detections directly from `MABM_route` with `plot = TRUE` argument; see `?MABM_route`.**
 
 With the survey route shapefiles created, the `plot_MABM_route` function allows the user to visualize the route and detections without the need to open an alternative GIS program.  We use [leaflet](http://rstudio.github.io/leaflet) to facilitate interactivity.  
 
