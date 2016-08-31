@@ -4,7 +4,8 @@
 \alias{plot_MABM_route}
 \title{Plot MABM route and, if requested, bat calls detected along the route.}
 \usage{
-plot_MABM_route(bad_gps = 5, gps = NULL)
+plot_MABM_route(bad_gps = 5, gps = NULL, plot_type = c("dynamic",
+  "static"))
 }
 \arguments{
 \item{bad_gps}{integer indicating the absolute maximum number of seconds between a
@@ -17,6 +18,10 @@ detection occurred after (before) the associated GPS location.}
 
 \item{gps}{character string that gives user the option to specify the path (full or
 relative) to the GPS point shapefile rather than using a dialog box}
+
+\item{plot_type}{character choice between a 'dynamic' map using \code{leaflet}
+(default) or a 'static' map using \code{ggmap} and \code{ggplot2}; the latter two
+packages are installed if necessary}
 }
 \value{
 an HTML widget object
