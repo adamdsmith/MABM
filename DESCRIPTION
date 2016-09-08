@@ -4,7 +4,8 @@ Title: Functions for the USFWS Region 4's Mobile Acoustical Bat Monitoring
     (MABM) Program
 Version: 0.5.3
 Date: 2016-08-17
-Author: Adam D. Smith <adam_d_smith@fws.gov>
+Authors@R: c(person("Adam", "Smith", email = "adam_d_smith@fws.gov", role = c("aut", "cre")),
+             person("David", "Richardson", role = c("ctb"), comment = "David is the primary user of the package and provided significant feedback for improvements."))
 Maintainer: Adam D. Smith <adam_d_smith@fws.gov>
 Description: Utility functions to georeference bat calls collected during mobile
     acoustical transects and assist with the quality control of collected data. In
