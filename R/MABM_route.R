@@ -29,6 +29,8 @@
 #' @param scrub logical indicating whether Anabat files (ending with '#'), if present, identified
 #'  as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
 #'  'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved
+#' @param gps logical (default = TRUE) indicating whether the a GPS file is available to georeference
+#'  the BCID classification file
 #' @param for_import logical indicating whether the output *.csv file will be imported
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
@@ -40,8 +42,9 @@
 #' @import sp
 #' @importFrom rgdal writeOGR
 #' @export
-MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
-                       keep_output = FALSE, overwrite = FALSE, plot = FALSE) {
+MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
+                       for_import = TRUE, keep_output = FALSE, overwrite = FALSE,
+                       plot = FALSE) {
 
     lat = lon = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
 
@@ -69,6 +72,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
                                  caption = "Select BCID output .xls file with bat call information.",
                                  multi = FALSE)
     if (length(calls) == 0) stop("Function cancelled.  No BCID output file selected.")
+    route_date <- substr(basename(calls), 1, 8)
 
     # Extract file input directory
     trunc <- sapply(gregexpr("\\\\", calls), tail, 1)
@@ -76,71 +80,80 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
 
     # Assume GPS text file in same directory and called `gps.txt`
     # Notify if this is so; prompt user to specify if `gps.txt` not found
-    if (file.exists(paste0(in_dir, "gps.txt"))) {
-        cat(paste("\nUsing 'gps.txt' found in same directory as",
-                  basename(calls), "as GPS source.\n\n"))
-        gps <- paste0(in_dir, "gps.txt")
+    if (!gps) {
+        GPS <- structure(list(lat = NA_real_, lon = NA_real_, alt_m = NA_real_,
+                              date = structure(NA_real_, class = "Date"), time = NA_character_,
+                              dt = structure(NA_real_, tzone = "UTC", class = c("POSIXct", "POSIXt")),
+                              call_id = NA_integer_, order = NA_integer_),
+                         .Names = c("lat","lon", "alt_m", "date", "time", "dt", "call_id", "order"),
+                         row.names = 1L, class = "data.frame")
+    } else if (file.exists(paste0(in_dir, "gps.txt"))) {
+        message("\nUsing 'gps.txt' found with ", basename(calls), " as GPS source.\n\n")
+        GPS <- paste0(in_dir, "gps.txt")
     } else {
-        gps <- utils::choose.files(default = paste0(in_dir, "*.txt"),
+        GPS <- utils::choose.files(default = paste0(in_dir, "*.txt"),
                                    caption = "File 'gps.txt' not found. Please select GPS text file.",
                                    multi = FALSE)
     }
-    if (length(gps) == 0) stop("Function cancelled. No GPS text file selected.")
+    if (length(GPS) == 0) stop("Function cancelled. No GPS text file selected.",
+                               "You can specify `gps = FALSE` if none exists.")
 
-    ## Initial GPS text file read and division into columns
-    # Get number of lines to skip at beginning of GPS files
-    # Looks for line that contains location headers
-    n_skip <- grep("Latitude", readr::read_lines(gps))
+    if (gps) {
+        ## Initial GPS text file read and division into columns
+        # Get number of lines to skip at beginning of GPS files
+        # Looks for line that contains location headers
+        n_skip <- grep("Latitude", readr::read_lines(GPS))
 
-    # Assign variable types and names; drop first and last columns
-    if (length(n_skip) == 1) {
-        gps <- readr::read_fwf(gps, readr::fwf_empty(gps, skip = n_skip),
-                           col_types = "_ccncc_", skip = n_skip)
-    } else {
-        gps_string <- readr::read_lines(gps)
-        gps_start <- head(n_skip, -1) + 1 # Drop last entry
-        gps_end <- (grep("H R", gps_string) - 2)[-1] # Two rows before start of datum info
-        # Drop empty segments
-        keep <- which(gps_end >= gps_start)
-        gps_start <- gps_start[keep]
-        gps_end <- gps_end[keep]
-        if (length(gps_start) == 1 & length(gps_end) == 1) {
-            keep <- seq(gps_start, gps_end)
+        # Assign variable types and names; drop first and last columns
+        if (length(n_skip) == 1) {
+            GPS <- readr::read_fwf(GPS, readr::fwf_empty(GPS, skip = n_skip),
+                                   col_types = "_ccncc_", skip = n_skip)
         } else {
-            keep <- do.call(c, mapply(seq, gps_start, gps_end))
+            GPS_string <- readr::read_lines(GPS)
+            GPS_start <- head(n_skip, -1) + 1 # Drop last entry
+            GPS_end <- (grep("H R", GPS_string) - 2)[-1] # Two rows before start of datum info
+            # Drop empty segments
+            keep <- which(GPS_end >= GPS_start)
+            GPS_start <- GPS_start[keep]
+            GPS_end <- GPS_end[keep]
+            if (length(GPS_start) == 1 & length(GPS_end) == 1) {
+                keep <- seq(GPS_start, GPS_end)
+            } else {
+                keep <- do.call(c, mapply(seq, GPS_start, GPS_end))
+            }
+            GPS <- GPS_string[keep] %>% paste(., collapse = "\n")
+            GPS <- readr::read_fwf(GPS, readr::fwf_empty(GPS),
+                                   col_types = "_ccncc_")
         }
-        gps <- gps_string[keep] %>% paste(., collapse = "\n")
-        gps <- readr::read_fwf(gps, readr::fwf_empty(gps),
-                               col_types = "_ccncc_")
+        names(GPS) <- c("lat", "lon", "alt_m", "date", "time")
+
+        # Restructure data
+        #    GPS <- GPS %>% mutate(lat = as.numeric(substring(lat, 2)),
+        #                          lon = ifelse(substring(lon, 1, 1) == "W",
+        #                                       as.numeric(substring(lon, 2)) * -1,
+        #                                       as.numeric(substring(lon, 2))),
+        #                          date = lubridate::ymd(date),
+        #                          dt = lubridate::ymd_hms(paste(date, time)),
+        #                          call_id = gsub(":", "", time)) %>%
+        #        arrange(dt) %>% # Sort chronologically
+        #        mutate(order = 1:nrow(GPS)) # Add order variable to facilitate QA/QC
+
+        # GPS quality control
+        # Sometimes GPS logs an incorrect date, although the time is correct
+        GPS <- gps_QC(GPS)
+
+        # Use until new dplyr is released
+        GPS <- plyr::ddply(GPS, plyr::.(date), plyr::mutate, # Doesn't like dplyr's mutate
+                           lat = as.numeric(substring(lat, 2)),
+                           lon = ifelse(substring(lon, 1, 1) == "W",
+                                        as.numeric(substring(lon, 2)) * -1,
+                                        as.numeric(substring(lon, 2))),
+                           date = lubridate::ymd(date),
+                           dt = lubridate::ymd_hms(paste(date, time)),
+                           call_id = as.integer(gsub(":", "", time)))
+        GPS <- dplyr::arrange(GPS, dt)
+        GPS$order <- 1:nrow(GPS)
     }
-    names(gps) <- c("lat", "lon", "alt_m", "date", "time")
-
-    # Restructure data
-#    gps <- gps %>% mutate(lat = as.numeric(substring(lat, 2)),
-#                          lon = ifelse(substring(lon, 1, 1) == "W",
-#                                       as.numeric(substring(lon, 2)) * -1,
-#                                       as.numeric(substring(lon, 2))),
-#                          date = lubridate::ymd(date),
-#                          dt = lubridate::ymd_hms(paste(date, time)),
-#                          call_id = gsub(":", "", time)) %>%
-#        arrange(dt) %>% # Sort chronologically
-#        mutate(order = 1:nrow(gps)) # Add order variable to facilitate QA/QC
-
-    # GPS quality control
-    # Sometimes GPS logs an incorrect date, although the time is correct
-    gps <- gps_QC(gps)
-
-    # Use until new dplyr is released
-    gps <- plyr::ddply(gps, plyr::.(date), plyr::mutate, # Doesn't like dplyr's mutate
-                       lat = as.numeric(substring(lat, 2)),
-                       lon = ifelse(substring(lon, 1, 1) == "W",
-                                    as.numeric(substring(lon, 2)) * -1,
-                                    as.numeric(substring(lon, 2))),
-                       date = lubridate::ymd(date),
-                       dt = lubridate::ymd_hms(paste(date, time)),
-                       call_id = as.integer(gsub(":", "", time)))
-    gps <- dplyr::arrange(gps, dt)
-    gps$order <- 1:nrow(gps)
 
     ## Call .xls file read and formatting
     # Get start/end rows of relevant call information in BCID .xls file
@@ -171,27 +184,33 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
                                gsub("[.]", "", .) %>%
                                 as.integer())
 
-    ## Associate (join) location data from GPS with bat calls
-    # However, rather than joining/merging, which require identical matches,
-    # we associate every call with the closest (absolute) GPS fix and record
-    # the difference in time (most will be 0; i.e., exact matches to the second)
+    if (gps) {
+        ## Associate (join) location data from GPS with bat calls
+        # However, rather than joining/merging, which require identical matches,
+        # we associate every call with the closest (absolute) GPS fix and record
+        # the difference in time (most will be 0; i.e., exact matches to the second)
 
-    # First, calculate difference in time (sec) between call and all GPS fixes
-    time_diffs <- outer(calls$call_id, gps$call_id, "-")
-    # Get index of the closest GPS fix
-    nearest_fix <- apply(time_diffs, 1, function(x) which.min(abs(x)))
-    gps_diff <- diag(time_diffs[, nearest_fix])
+        # First, calculate difference in time (sec) between call and all GPS fixes
+        time_diffs <- outer(calls$call_id, GPS$call_id, "-")
+        # Get index of the closest GPS fix
+        nearest_fix <- apply(time_diffs, 1, function(x) which.min(abs(x)))
+        GPS_diff <- diag(time_diffs[, nearest_fix])
 
-    calls <- cbind(calls, dplyr::select(gps, -call_id)[nearest_fix, ], GPS_diff = gps_diff) %>%
-        dplyr::arrange(order) # Ensure ordered chronologically
+        calls <- cbind(calls, dplyr::select(GPS, -call_id)[nearest_fix, ],
+                       GPS_diff = GPS_diff, row.names = NULL) %>%
+            dplyr::arrange(order) # Ensure ordered chronologically
+    } else {
+        calls <- cbind(calls, dplyr::select(GPS, -call_id), GPS_diff = NA,
+                            row.names = NULL)
+    }
 
-    ## Rearranges columns for import into MABM MS Access database (column order
+    ## Rearranges columns for importGPS into MABM MS Access database (column order
     ## specified in import specification file 'calls1'
     if (for_import) {
         import <- with(calls,
                      data.frame(lat, lon, alt_m, date, time, call_id, filename,
                                 spp, spp_perc, group, group_perc, tot_pulses, disc_prob,
-                                call_id, order, gps_diff, site_name = route_name))
+                                call_id, order, GPS_diff, site_name = route_name))
         # Replace NAs with blanks to play nicely with conversion in Access
         # To do so requires the conversion of all fields to text
         # NOTE: `time` is the time of the GPS fix, not the detection
@@ -200,7 +219,6 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
     }
 
     ## Create output directory
-    route_date <- min(gps$date) %>% as.character() %>% gsub("-", "", .)
     out_name <- paste(route_name, route_date, sep = "_")
     out_dir <- paste0(in_dir, out_name)
 
@@ -214,36 +232,46 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
     name <- paste0("Calls_", out_name, "_final.csv")
     if (for_import) write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE)
 
-    ## Create point shapefile of all GPS locations (SavedRoute)
-    gps_spdf <- gps
-    coordinates(gps_spdf) <- ~ lon + lat
-    proj4string(gps_spdf) <- CRS("+proj=longlat +datum=WGS84")
-    name <- paste0("SavedRoute_", out_name)
-    writeOGR(gps_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+    if (gps) {
+        ## Create point shapefile of all GPS locations (SavedRoute)
+        GPS_spdf <- GPS
+        coordinates(GPS_spdf) <- ~ lon + lat
+        proj4string(GPS_spdf) <- CRS("+proj=longlat +datum=WGS84")
+        name <- paste0("SavedRoute_", out_name)
+        writeOGR(GPS_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
-    ## Create line shapefile of the route (RouteLine)
-    gps_sldf <- Line(coordinates(gps_spdf)) %>% list() %>% Lines(., ID = "route") %>%
-        list() %>% SpatialLines()
-    df <- data.frame(id = "route")
-    rownames(df) <- "route"
-    gps_sldf <- SpatialLinesDataFrame(gps_sldf, df)
-    proj4string(gps_sldf) <- proj4string(gps_spdf)
-    name <- paste0("RouteLine_", out_name)
-    writeOGR(gps_sldf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+        ## Create line shapefile of the route (RouteLine)
+        GPS_sldf <- Line(coordinates(GPS_spdf)) %>% list() %>% Lines(., ID = "route") %>%
+            list() %>% SpatialLines()
+        df <- data.frame(id = "route")
+        rownames(df) <- "route"
+        GPS_sldf <- SpatialLinesDataFrame(GPS_sldf, df)
+        proj4string(GPS_sldf) <- proj4string(GPS_spdf)
+        name <- paste0("RouteLine_", out_name)
+        writeOGR(GPS_sldf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
-    ## Create point shapefile of locations with bat calls (Calls)
-    calls_spdf <- calls
-    coordinates(calls_spdf) <- ~ lon + lat
-    proj4string(calls_spdf) <- proj4string(gps_spdf)
-    name <- paste0("Calls_", out_name)
-    writeOGR(calls_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+        ## Create point shapefile of locations with bat calls (Calls)
+        calls_spdf <- calls
+        coordinates(calls_spdf) <- ~ lon + lat
+        proj4string(calls_spdf) <- proj4string(GPS_spdf)
+        name <- paste0("Calls_", out_name)
+        writeOGR(calls_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
 
-    cat(paste0("The folder '", out_name, "' has been created in\n'",
-               in_dir, "'\n", "and contains the following:\n\n",
-               "Shapefiles:\n",
-               paste(list.files(path = out_dir, pattern=".shp$"), collapse = "\n"),
-               "\n\nText files:\n",
-               list.files(path = out_dir, pattern=".csv$")))
+        message("The folder '", out_name, "' has been created in\n'",
+                in_dir, "'\n", "and contains the following:\n\n",
+                "Shapefiles:\n",
+                paste(list.files(path = out_dir, pattern=".shp$"), collapse = "\n"),
+                "\n\nText files:\n",
+                list.files(path = out_dir, pattern=".csv$"))
+    } else {
+        message("The folder '", out_name, "' has been created in\n'",
+                in_dir, "'\n", "and contains the following:\n\n",
+                "Shapefiles:\n",
+                "No GPS data identified. No shapefiles created.\n",
+                "\n\nText files:\n",
+                list.files(path = out_dir, pattern=".csv$"))
+
+    }
 
     if (scrub) {
         # Get list of all call files in directory
@@ -257,9 +285,9 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
 
         # Checking necessity of scrubbing before doing it!
         if (length(all_calls) == 0) {
-            cat("\n\nScrubbing summary:\nNo Anabat files detected in directory.  Scrubbing ignored.")
+            message("\n\nScrubbing summary:\nNo Anabat files detected in directory.  Scrubbing ignored.")
         } else if (length(bad_calls) == 0) {
-            cat("\n\nScrubbing summary:\nNo suspected noise files in directory.  Scrubbing ignored.")
+            message("\n\nScrubbing summary:\nNo suspected noise files in directory.  Scrubbing ignored.")
         } else { # Yay, we get to scrub!!!
             # Create scrubbed directory
             scrub_dir <- paste0(in_dir, "scrubbed")
@@ -267,8 +295,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
 
             # Move likely noise files
             sapply(bad_calls, move, in_dir = in_dir, out_dir = scrub_dir)
-            cat(paste0("\n\nScrubbing summary:\nMoved ", length(bad_calls), " suspected noise files to:\n'",
-                       scrub_dir, "'"))
+            message("\n\nScrubbing summary:\nMoved ", length(bad_calls),
+                    " suspected noise files to:\n'", scrub_dir, "'")
         }
     }
 
@@ -279,6 +307,6 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, for_import = TRUE,
         print(p)
     }
 
-    if (keep_output) return(list(final_calls = calls, route_pt = gps_spdf,
-                                 route_line = gps_sldf, call_pt = calls_spdf))
+    if (keep_output) return(list(final_calls = calls, route_pt = GPS_spdf,
+                                 route_line = GPS_sldf, call_pt = calls_spdf))
 }

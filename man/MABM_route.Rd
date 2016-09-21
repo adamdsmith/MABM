@@ -4,8 +4,9 @@
 \alias{MABM_route}
 \title{MABM shapefile creation, preparation for database import, and audio file scrubbing.}
 \usage{
-MABM_route(route_name = NULL, scrub = TRUE, for_import = TRUE,
-  keep_output = FALSE, overwrite = FALSE, plot = FALSE)
+MABM_route(route_name = NULL, scrub = TRUE, gps = TRUE,
+  for_import = TRUE, keep_output = FALSE, overwrite = FALSE,
+  plot = FALSE)
 }
 \arguments{
 \item{route_name}{character string indicating the name used to file the created output.  Default (NULL)
@@ -15,6 +16,9 @@ when processing data external to the MABM program (e.g., data collected along a 
 \item{scrub}{logical indicating whether Anabat files (ending with '#'), if present, identified
 as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newly created
 'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved}
+
+\item{gps}{logical (default = TRUE) indicating whether the a GPS file is available to georeference
+the BCID classification file}
 
 \item{for_import}{logical indicating whether the output *.csv file will be imported
 into the MABM Access database (default = TRUE).  See details.}
