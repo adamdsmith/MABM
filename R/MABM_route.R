@@ -88,7 +88,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                          .Names = c("lat","lon", "alt_m", "date", "time", "dt", "call_id", "order"),
                          row.names = 1L, class = "data.frame")
     } else if (file.exists(paste0(in_dir, "gps.txt"))) {
-        message("\nUsing 'gps.txt' found with ", basename(calls), " as GPS source.\n\n")
+        message("\nUsing 'gps.txt' found with ", basename(calls), " as GPS source.\n")
         GPS <- paste0(in_dir, "gps.txt")
     } else {
         GPS <- utils::choose.files(default = paste0(in_dir, "*.txt"),
@@ -284,9 +284,9 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
         # Checking necessity of scrubbing before doing it!
         if (length(all_calls) == 0) {
-            message("\n\nScrubbing summary:\nNo Anabat files detected in directory.  Scrubbing ignored.")
+            message("\nScrubbing summary:\nNo Anabat files detected in directory.  Scrubbing ignored.")
         } else if (length(bad_calls) == 0) {
-            message("\n\nScrubbing summary:\nNo suspected noise files in directory.  Scrubbing ignored.")
+            message("\nScrubbing summary:\nNo suspected noise files in directory.  Scrubbing ignored.")
         } else { # Yay, we get to scrub!!!
             # Create scrubbed directory
             scrub_dir <- paste0(in_dir, "scrubbed")
@@ -294,7 +294,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
             # Move likely noise files
             sapply(bad_calls, move, in_dir = in_dir, out_dir = scrub_dir)
-            message("\n\nScrubbing summary:\nMoved ", length(bad_calls),
+            message("\nScrubbing summary:\nMoved ", length(bad_calls),
                     " suspected noise files to:\n'", scrub_dir, "'")
         }
     }
