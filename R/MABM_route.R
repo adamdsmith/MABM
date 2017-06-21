@@ -31,7 +31,7 @@
 #'  'scrubbed' subdirectory (default = TRUE); non-scrubbed files are not moved
 #' @param gps logical (default = TRUE) indicating whether the a GPS file is available to georeference
 #'  the BCID classification file
-#' @param for_import logical indicating whether the output *.csv file will be imported
+#' @param for_import logical indicating whether the output *.csv file should be formatted for import
 #'  into the MABM Access database (default = TRUE).  See details.
 #' @param keep_output logical (default = FALSE) that creates a list containing potentially
 #'  useful outputs.
@@ -229,8 +229,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     }
 
     # Write final bat call data file with associated GPS information
-    name <- paste0("Calls_", out_name, "_final.csv")
-    if (for_import) write.csv(import, file = paste(out_dir, name, sep = "/"), quote = FALSE)
+    csv_name <- paste0("Calls_", out_name, "_final.csv")
+    if (for_import) write.csv(import, file = file.path(dirname(in_dir), csv_name), quote = FALSE)
 
     if (gps) {
         ## Create point shapefile of all GPS locations (SavedRoute)
@@ -260,17 +260,16 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         message("The folder '", out_name, "' has been created in\n'",
                 in_dir, "'\n", "and contains the following:\n\n",
                 "Shapefiles:\n",
-                paste(list.files(path = out_dir, pattern=".shp$"), collapse = "\n"),
-                "\n\nText files:\n",
-                list.files(path = out_dir, pattern=".csv$"))
+                paste(list.files(path = out_dir, pattern=".shp$"), collapse = "\n"), "\n")
+        if (for_import)
+            message(csv_name, " is ready for MABM database import in ", dirname(in_dir))
     } else {
         message("The folder '", out_name, "' has been created in\n'",
                 in_dir, "'\n", "and contains the following:\n\n",
                 "Shapefiles:\n",
-                "No GPS data identified. No shapefiles created.\n",
-                "\n\nText files:\n",
-                list.files(path = out_dir, pattern=".csv$"))
-
+                "No GPS data identified. No shapefiles created.\n")
+        if (for_import)
+            message(csv_name, " is ready for MABM database import in ", dirname(in_dir))
     }
 
     if (scrub) {

@@ -20,7 +20,7 @@ as noise (i.e., not assigned an ID in BCID) should be scrubbed (moved) to a newl
 \item{gps}{logical (default = TRUE) indicating whether the a GPS file is available to georeference
 the BCID classification file}
 
-\item{for_import}{logical indicating whether the output *.csv file will be imported
+\item{for_import}{logical indicating whether the output *.csv file should be formatted for import
 into the MABM Access database (default = TRUE).  See details.}
 
 \item{keep_output}{logical (default = FALSE) that creates a list containing potentially
@@ -57,4 +57,3 @@ If \code{keep_output = TRUE}, the function creates a list containing (1) a \code
  user wants to conduct further investigations in R. To access this output, remember to
  assign the function output to an R object.
 }
-
