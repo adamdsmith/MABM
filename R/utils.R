@@ -107,6 +107,7 @@ makeBatIconList <- function(w = 38, h = 21, anchX = 20, anchY = 20) {
 }
 
 set_col_types <- function(obj, types){
+    obj <- as.data.frame(obj)
     for (i in 1:length(obj)){
         FUN <- switch(types[i],
                       character = as.character,
