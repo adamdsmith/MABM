@@ -43,4 +43,3 @@ By default, every third bat detection (when plotted) is labeled with its associa
 stamp and the route is shaded by time (minutes) elapsed from the first GPS fix to help
 visualize the route.  These can be suppressed with \code{labels = FALSE}.
 }
-

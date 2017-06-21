@@ -20,4 +20,3 @@ spreadsheet.  EchoClass avoids this complication by producing a single list of c
 classifications, sorted by date, in its .xls output.  For scrubbing call files associated
 with a single or multiple nights of recording, see \code{\link{scrub_noise}}.
 }
-

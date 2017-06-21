@@ -20,4 +20,3 @@ This function uses the classification output from Bat Call Identification (BCID;
  a new subdirectory.  This function
  is designed to handle multiple nights of recordings in the BCID output.
 }
-

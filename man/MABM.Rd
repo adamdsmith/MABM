@@ -8,4 +8,3 @@
 \description{
 See the \href{https://github.com/adamdsmith/MABM}{README} on GitHub
 }
-
