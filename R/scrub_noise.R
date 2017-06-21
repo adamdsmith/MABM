@@ -58,7 +58,7 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
                       "tot_pulses", "disc_prob", "start_night")
 
     # Get rid of some random tabs retained in the BCID .xls output
-    calls <- dplyr::mutate_all(calls, clean_tabs)
+    calls <- mutate_all(calls, clean_tabs)
 
     # Replace blanks (i.e., "") with NAs
     calls[calls == ""] <- NA

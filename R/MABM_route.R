@@ -144,7 +144,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
         # Use until new dplyr is released
         GPS <- GPS %>%
-            dplyr::mutate(lat = as.numeric(substring(lat, 2)),
+            mutate(lat = as.numeric(substring(lat, 2)),
                           lon = ifelse(substring(lon, 1, 1) == "W",
                                        as.numeric(substring(lon, 2)) * -1,
                                        as.numeric(substring(lon, 2))),
@@ -169,7 +169,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     names(calls) <- c("filename", "spp", "spp_perc", "group", "group_perc", "tot_pulses", "disc_prob")
 
     # Get rid of some random tabs retained in the BCID .xls output
-    calls <- dplyr::mutate_all(calls, clean_tabs)
+    calls <- mutate_all(calls, clean_tabs)
 
     # Replace blanks (i.e., "") with NAs
     calls[calls == ""] <- NA
@@ -179,7 +179,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
     # Restructure data
     # transform filename to call ID
-    calls <- dplyr::mutate(calls,
+    calls <- mutate(calls,
                            call_id = filename %>% substr(5, 11) %>%
                                gsub("[.]", "", .) %>%
                                 as.integer())
@@ -196,11 +196,11 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         nearest_fix <- apply(time_diffs, 1, function(x) which.min(abs(x)))
         GPS_diff <- diag(time_diffs[, nearest_fix])
 
-        calls <- cbind(calls, dplyr::select(GPS, -call_id)[nearest_fix, ],
+        calls <- cbind(calls, select(GPS, -call_id)[nearest_fix, ],
                        GPS_diff = GPS_diff, row.names = NULL) %>%
-            dplyr::arrange(order) # Ensure ordered chronologically
+            arrange(order) # Ensure ordered chronologically
     } else {
-        calls <- cbind(calls, dplyr::select(GPS, -call_id), GPS_diff = NA,
+        calls <- cbind(calls, select(GPS, -call_id), GPS_diff = NA,
                             row.names = NULL)
     }
 

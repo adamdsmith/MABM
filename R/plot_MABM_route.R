@@ -82,7 +82,7 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
 
   # Add elapsed time to GPS data set
   gps@data <- gps@data %>%
-    dplyr::mutate(t_seg = c(0, diff(lubridate::decimal_date(lubridate::ymd_hms(dt)))) * 525960, # elapsed time since last fix
+    mutate(t_seg = c(0, diff(lubridate::decimal_date(lubridate::ymd_hms(dt)))) * 525960, # elapsed time since last fix
                   t_elapsed = round(cumsum(t_seg), 1))
 
   if (plot_type == "dynamic") {

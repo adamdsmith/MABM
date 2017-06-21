@@ -41,7 +41,7 @@ gps_QC <- function(gps) {
 
     # Fix records with bad date (i.e., did not occur during modal year)
     fix_dates <- gps[-good_dates, ]
-    fix_dates <- dplyr::mutate(fix_dates,
+    fix_dates <- mutate(fix_dates,
                                date = ifelse(as.numeric(substr(time, 1, 2)) >= 12,
                                              as.character(start_date),
                                              as.character(start_date + lubridate::days(1))))

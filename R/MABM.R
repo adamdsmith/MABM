@@ -4,4 +4,5 @@
 #'
 #' @docType package
 #' @name MABM
+#' @import dplyr
 NULL

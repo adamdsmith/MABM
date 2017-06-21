@@ -67,16 +67,16 @@ id_compare <- function() {
     names(BCID_calls) <- c("filename", "BCID_spp")
 
     # Get rid of some random retained tab characters
-    BCID_calls <- dplyr::mutate_all(BCID_calls, clean_tabs)
+    BCID_calls <- mutate_all(BCID_calls, clean_tabs)
 
     ## Join BCID with EchoClass
-    comparison <- dplyr::left_join(EC_calls, BCID_calls)
+    comparison <- left_join(EC_calls, BCID_calls)
 
     ## Classifications match?
     comparison$agree <- comparison$EC_spp == comparison$BCID_spp
 
     ## Sort them according to DR's specifications
-    comparison <- dplyr::arrange(comparison, -agree, EC_spp, BCID_spp, filename)
+    comparison <- arrange(comparison, -agree, EC_spp, BCID_spp, filename)
 
 
     ## Save it
