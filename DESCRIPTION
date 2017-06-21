@@ -2,7 +2,7 @@ Package: MABM
 Type: Package
 Title: Functions for the USFWS Region 4's Mobile Acoustical Bat Monitoring
     (MABM) Program
-Version: 0.5.3
+Version: 0.5.4
 Date: 2016-08-17
 Authors@R: c(person("Adam", "Smith", email = "adam_d_smith@fws.gov", role = c("aut", "cre")),
              person("David", "Richardson", role = c("ctb"), comment = "David is the primary user of the package and provided significant feedback for improvements."))
@@ -23,7 +23,7 @@ Imports:
     readr (>= 1.0.0),
     readxl (>= 0.1.1),
     sp (>= 1.2-3),
-    rgdal (>= 1.1-10),
+    rgdal (>= 1.1-10)
 Suggests:
     xlsx (>= 0.5.7),
     ggmap (>= 2.6.1),
@@ -39,4 +39,4 @@ Copyright: This software is in the public domain because it contains materials
 LazyData: TRUE
 URL: https://github.com/adamdsmith/MABM
 BugReports: https://github.com/adamdsmith/MABM/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

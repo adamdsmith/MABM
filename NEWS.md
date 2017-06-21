@@ -1,3 +1,8 @@
+# MABM 0.5.4
+
+* remove `plyr` dependency
+* output csv file for MABM database import is now exported to more convenient location for DR
+
 # MABM 0.5.3
 
 * `MABM_route` now offers the options of:
