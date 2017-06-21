@@ -143,16 +143,16 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         GPS <- gps_QC(GPS)
 
         # Use until new dplyr is released
-        GPS <- plyr::ddply(GPS, plyr::.(date), plyr::mutate, # Doesn't like dplyr's mutate
-                           lat = as.numeric(substring(lat, 2)),
-                           lon = ifelse(substring(lon, 1, 1) == "W",
-                                        as.numeric(substring(lon, 2)) * -1,
-                                        as.numeric(substring(lon, 2))),
-                           date = lubridate::ymd(date),
-                           dt = lubridate::ymd_hms(paste(date, time)),
-                           call_id = as.integer(gsub(":", "", time)))
-        GPS <- dplyr::arrange(GPS, dt)
-        GPS$order <- 1:nrow(GPS)
+        GPS <- GPS %>%
+            dplyr::mutate(lat = as.numeric(substring(lat, 2)),
+                          lon = ifelse(substring(lon, 1, 1) == "W",
+                                       as.numeric(substring(lon, 2)) * -1,
+                                       as.numeric(substring(lon, 2))),
+                          date = lubridate::ymd(date),
+                          dt = lubridate::ymd_hms(paste(date, time)),
+                          call_id = as.integer(gsub(":", "", time))) %>%
+            arrange(GPS, dt) %>% as.data.frame()
+        GPS$order = 1:nrow(GPS)
     }
 
     ## Call .xls file read and formatting
@@ -169,7 +169,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     names(calls) <- c("filename", "spp", "spp_perc", "group", "group_perc", "tot_pulses", "disc_prob")
 
     # Get rid of some random tabs retained in the BCID .xls output
-    calls <- plyr::colwise(function(x) gsub("\t", "", x, fixed = TRUE))(calls)
+    calls <- dplyr::mutate_all(calls, clean_tabs)
 
     # Replace blanks (i.e., "") with NAs
     calls[calls == ""] <- NA

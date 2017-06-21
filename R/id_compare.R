@@ -67,7 +67,7 @@ id_compare <- function() {
     names(BCID_calls) <- c("filename", "BCID_spp")
 
     # Get rid of some random retained tab characters
-    BCID_calls <- plyr::colwise(function(x) gsub("\t", "", x, fixed = TRUE))(BCID_calls)
+    BCID_calls <- dplyr::mutate_all(BCID_calls, clean_tabs)
 
     ## Join BCID with EchoClass
     comparison <- dplyr::left_join(EC_calls, BCID_calls)

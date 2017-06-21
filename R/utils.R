@@ -125,3 +125,5 @@ sequence <- function(start, end) {
     mat <- cbind(start, end)
     unlist(apply(mat, 1, function(x) seq(x[1], x[2], 1)))
 }
+
+clean_tabs <- function(x) gsub("[\t\n]", "", x)
