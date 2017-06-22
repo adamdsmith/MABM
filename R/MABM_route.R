@@ -48,6 +48,12 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
     lat = lon = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
 
+    # Ask to set MABM root directory
+    if (is.null(getOption("MABM_home"))) {
+        ans <- yesno()
+        if (ans %in% c("Y", "y")) set_MABM_root()
+    }
+
     # If keeping output (keep_output = TRUE), override for_import
     if (keep_output) for_import <- FALSE
 
@@ -68,7 +74,13 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     ## Retrieve GPS and BCID files
     ## Assumes BCID file is in same directory
     # Call file first
-    calls <- utils::choose.files(default = "*.xls",
+    if (!is.null(getOption("MABM_home"))) {
+        base_dir <- grep(paste0(route_name, "$"), list.dirs(getOption("MABM_home")), value = TRUE)
+        if (length(base_dir) == 1) {
+            base_dir <- paste0(normalizePath(base_dir), "\\*.xls")
+        } else base_dir <- "C:\\*.xls"
+    } else base_dir = "C:\\*.xls"
+    calls <- utils::choose.files(default = base_dir,
                                  caption = "Select BCID output .xls file with bat call information.",
                                  multi = FALSE)
     if (length(calls) == 0) stop("Function cancelled.  No BCID output file selected.")
