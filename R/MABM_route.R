@@ -75,7 +75,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     ## Assumes BCID file is in same directory
     # Call file first
     if (!is.null(getOption("MABM_home"))) {
-        base_dir <- grep(paste0(route_name, "$"), list.dirs(getOption("MABM_home")), value = TRUE)
+        base_dir <- grep(paste0(route_name, "$"), two_deep(getOption("MABM_home")), value = TRUE)
         if (length(base_dir) == 1) {
             base_dir <- paste0(normalizePath(base_dir), "\\*.xls")
         } else base_dir <- "C:\\*.xls"

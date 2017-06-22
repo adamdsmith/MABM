@@ -135,3 +135,8 @@ yesno <- function() {
     ans <- substr(readline(prompt="Would you like to set a MABM root directory (y/n)?"), 1L, 1L)
     return(tolower(ans))
 }
+
+two_deep <- function(dir) {
+    dirs <- list.dirs(dir, recursive = FALSE)
+    lapply(dirs, function(i) list.dirs(i, recursive = FALSE)) %>% unlist()
+}
