@@ -128,6 +128,10 @@ sequence <- function(start, end) {
 }
 
 clean_tabs <- function(x) gsub("[\t\n]", "", x)
+
+dec_min <- function(call_id) as.numeric(substr(call_id,1,4)) + as.numeric(substr(call_id, 5,6))/60
+
 yesno <- function() {
     ans <- substr(readline(prompt="Would you like to set a MABM root directory (y/n)?"), 1L, 1L)
     return(tolower(ans))
+}

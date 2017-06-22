@@ -157,13 +157,14 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         # Use until new dplyr is released
         GPS <- GPS %>%
             mutate(lat = as.numeric(substring(lat, 2)),
-                          lon = ifelse(substring(lon, 1, 1) == "W",
-                                       as.numeric(substring(lon, 2)) * -1,
-                                       as.numeric(substring(lon, 2))),
-                          date = lubridate::ymd(date),
-                          dt = lubridate::ymd_hms(paste(date, time)),
-                          call_id = as.integer(gsub(":", "", time))) %>%
-            arrange(GPS, dt) %>% as.data.frame()
+                   lon = ifelse(substring(lon, 1, 1) == "W",
+                                as.numeric(substring(lon, 2)) * -1,
+                                as.numeric(substring(lon, 2))),
+                   date = lubridate::ymd(date),
+                   dt = lubridate::ymd_hms(paste(date, time)),
+                   call_id = as.integer(gsub(":", "", time)),
+                   dec_min = dec_min(call_id)) %>%
+            arrange(dt) %>% as.data.frame()
         GPS$order = 1:nrow(GPS)
     }
 
@@ -192,9 +193,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     # Restructure data
     # transform filename to call ID
     calls <- mutate(calls,
-                           call_id = filename %>% substr(5, 11) %>%
-                               gsub("[.]", "", .) %>%
-                                as.integer())
+                    call_id = as.integer(gsub("[.]", "", substr(filename, 5, 11))),
+                    dec_min = dec_min(call_id))
 
     if (gps) {
         ## Associate (join) location data from GPS with bat calls
@@ -203,16 +203,16 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         # the difference in time (most will be 0; i.e., exact matches to the second)
 
         # First, calculate difference in time (sec) between call and all GPS fixes
-        time_diffs <- outer(calls$call_id, GPS$call_id, "-")
+        time_diffs <- outer(calls$dec_min, GPS$dec_min, "-")
         # Get index of the closest GPS fix
         nearest_fix <- apply(time_diffs, 1, function(x) which.min(abs(x)))
         GPS_diff <- diag(time_diffs[, nearest_fix])
 
-        calls <- cbind(calls, select(GPS, -call_id)[nearest_fix, ],
+        calls <- cbind(select(calls, -dec_min), select(GPS, -call_id)[nearest_fix, ],
                        GPS_diff = GPS_diff, row.names = NULL) %>%
             arrange(order) # Ensure ordered chronologically
     } else {
-        calls <- cbind(calls, select(GPS, -call_id), GPS_diff = NA,
+        calls <- cbind(select(calls, -dec_min), select(GPS, -call_id), GPS_diff = NA,
                             row.names = NULL)
     }
 
