@@ -16,9 +16,11 @@ This function allows you to specify the root directory containing all MABM route
  using `MABM_route`.  Set this once at the beginning of a session (see example).
 }
 \examples{
-# Browse to specify MABM root directory
+\dontrun{
+#' # Browse to specify MABM root directory
 set_MABM_root()
 
 # Speficy MABM root directory directly
 set_MABM_root("C:/MABM")
+}
 }

@@ -8,11 +8,13 @@
 #'  related data (i.e., MABM route directories with call files, shapefiles, and annual reports).
 #' @export
 #' @examples
-#' # Browse to specify MABM root directory
+#' \dontrun{
+#' #' # Browse to specify MABM root directory
 #' set_MABM_root()
 #'
 #' # Speficy MABM root directory directly
 #' set_MABM_root("C:/MABM")
+#' }
 
 set_MABM_root <- function(dir = NULL) {
     if (is.null(dir)) {
