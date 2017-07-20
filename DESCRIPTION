@@ -22,13 +22,13 @@ Imports:
     lubridate (>= 1.5.6),
     readr (>= 1.0.0),
     readxl (>= 0.1.1),
+    rgdal (>= 1.1-10),
     sp (>= 1.2-3),
-    rgdal (>= 1.1-10)
+    utils
 Suggests:
     xlsx (>= 0.5.7),
     ggmap (>= 2.6.1),
-    ggplot2 (>= 2.1.0),
-    testthat
+    ggplot2 (>= 2.1.0)
 License: CC0
 Copyright: This software is in the public domain because it contains materials
     that originally came from the United States Fish & Wildlife Service, an agency
