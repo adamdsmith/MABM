@@ -1,5 +1,7 @@
 language: r
 sudo: required
+cran: http://cran.rstudio.com
+dist: trusty
 r_binary_packages:
  - rJava
  - xlsxjars
