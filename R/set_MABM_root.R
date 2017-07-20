@@ -18,7 +18,7 @@
 
 set_MABM_root <- function(dir = NULL) {
     if (is.null(dir)) {
-        dir <- choose.dir("C:/", caption = "Select MABM root folder.")
+        dir <- utils::choose.dir("C:/", caption = "Select MABM root folder.")
         if (is.na(dir)) stop("No MABM root directory identified.")
         options(MABM_home = dir)
     } else {
