@@ -29,7 +29,6 @@
 #'  packages are installed if necessary
 #' @return an HTML widget object
 #' @import leaflet
-#' @importFrom htmltools htmlEscape
 #' @export
 
 plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "static")) {
@@ -110,8 +109,8 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
                                   Time: %s<br/>
                                   Nearest GPS fix: %s sec</br>
                                   ID probability: %3.0f%%",
-                                  htmlEscape(spp), htmlEscape(time),
-                                  htmlEscape(GPS_diff), htmlEscape(disc_prob * 100)),
+                                  htmltools::htmlEscape(spp), htmltools::htmlEscape(time),
+                                  htmltools::htmlEscape(GPS_diff), htmltools::htmlEscape(disc_prob * 100)),
                  icon = ~batIcons[spp])
 
     # Add "bad" (georeferenced) bat detections if present
@@ -123,8 +122,8 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
                                   Time: %s<br/>
                                   Nearest GPS fix: %s sec</br>
                                   ID probability: %3.0f%%",
-                                    htmlEscape(spp), htmlEscape(time),
-                                    htmlEscape(GPS_diff), htmlEscape(disc_prob * 100)),
+                                    htmltools::htmlEscape(spp), htmltools::htmlEscape(time),
+                                    htmltools::htmlEscape(GPS_diff), htmltools::htmlEscape(disc_prob * 100)),
                    icon = ~batIcons[spp])
     }
 
