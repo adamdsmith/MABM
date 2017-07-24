@@ -167,7 +167,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
     # Read file
     # This is all very hack-ish until readxl can incorporate the cellranger package
-    calls <- readxl::read_excel(calls, sheet = 1, col_names = FALSE)[call_start:call_end, 1:7]
+    calls <- readxl::read_excel(calls, sheet = 1, col_names = FALSE,
+                                range = readxl::cell_limits(c(call_start, 1), c(call_end, 7)))
     names(calls) <- c("filename", "spp", "spp_perc", "group", "group_perc", "tot_pulses", "disc_prob")
 
     # Get rid of some random tabs retained in the BCID .xls output
