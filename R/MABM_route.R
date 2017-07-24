@@ -139,17 +139,6 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         }
         names(GPS) <- c("lat", "lon", "alt_m", "date", "time")
 
-        # Restructure data
-        #    GPS <- GPS %>% mutate(lat = as.numeric(substring(lat, 2)),
-        #                          lon = ifelse(substring(lon, 1, 1) == "W",
-        #                                       as.numeric(substring(lon, 2)) * -1,
-        #                                       as.numeric(substring(lon, 2))),
-        #                          date = lubridate::ymd(date),
-        #                          dt = lubridate::ymd_hms(paste(date, time)),
-        #                          call_id = gsub(":", "", time)) %>%
-        #        arrange(dt) %>% # Sort chronologically
-        #        mutate(order = 1:nrow(GPS)) # Add order variable to facilitate QA/QC
-
         # GPS quality control
         # Sometimes GPS logs an incorrect date, although the time is correct
         GPS <- gps_QC(GPS)
@@ -245,29 +234,24 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     if (for_import) write.csv(import, file = file.path(dirname(in_dir), csv_name), quote = FALSE)
 
     if (gps) {
+
         ## Create point shapefile of all GPS locations (SavedRoute)
-        GPS_spdf <- GPS
-        coordinates(GPS_spdf) <- ~ lon + lat
-        proj4string(GPS_spdf) <- CRS("+proj=longlat +datum=WGS84")
+        GPS_sf <- st_as_sf(GPS, coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84") %>%
+            mutate(dt = as.character(dt))
         name <- paste0("SavedRoute_", out_name)
-        writeOGR(GPS_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+        st_write(GPS_sf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
         ## Create line shapefile of the route (RouteLine)
-        GPS_sldf <- Line(coordinates(GPS_spdf)) %>% list() %>% Lines(., ID = "route") %>%
-            list() %>% SpatialLines()
-        df <- data.frame(id = "route")
-        rownames(df) <- "route"
-        GPS_sldf <- SpatialLinesDataFrame(GPS_sldf, df)
-        proj4string(GPS_sldf) <- proj4string(GPS_spdf)
+        GPS_lsf <- GPS_sf %>% st_coordinates() %>% st_linestring() %>%
+            st_sfc() %>% st_sf(id = "route") %>% st_set_crs(st_crs(GPS_sf))
         name <- paste0("RouteLine_", out_name)
-        writeOGR(GPS_sldf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+        st_write(GPS_lsf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
         ## Create point shapefile of locations with bat calls (Calls)
-        calls_spdf <- calls
-        coordinates(calls_spdf) <- ~ lon + lat
-        proj4string(calls_spdf) <- proj4string(GPS_spdf)
+        calls_sf <- st_as_sf(calls, coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84") %>%
+            mutate(dt = as.character(dt))
         name <- paste0("Calls_", out_name)
-        writeOGR(calls_spdf, out_dir, name, driver = "ESRI Shapefile", overwrite_layer = TRUE)
+        st_write(calls_sf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
         message("The folder '", out_name, "' has been created in\n'",
                 in_dir, "'\n", "and contains the following:\n\n",

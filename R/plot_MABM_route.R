@@ -68,22 +68,15 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
   #                                caption = "Select bat call shapefile (e.g., 'Calls.shp').")
   calls <- sub("SavedRoute", "Calls", gps)
 
-  # Split GPS file name
-  path_gps <- gps %>% strsplit(., "\\\\") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
-  shape_gps <- gps %>% strsplit(., "\\\\") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
-
-  # Split call file name
-  path_calls <- calls %>% strsplit(., "\\\\") %>% unlist() %>% head(., -1) %>% paste(., collapse = "/")
-  shape_calls <- calls %>% strsplit(., "\\\\") %>% unlist() %>% tail(., 1) %>% tools::file_path_sans_ext()
-
   # Read shapefile(s)
-  gps <- rgdal::readOGR(path_gps, shape_gps, verbose = FALSE, stringsAsFactors = FALSE)
-  calls <- rgdal::readOGR(path_calls, shape_calls, verbose = FALSE, stringsAsFactors = FALSE)
+  gps <- st_read(gps, quiet = TRUE)
+  calls <- st_read(calls, quiet = TRUE)
 
   # Add elapsed time to GPS data set
-  gps@data <- gps@data %>%
-    mutate(t_seg = c(0, diff(lubridate::decimal_date(lubridate::ymd_hms(dt)))) * 525960, # elapsed time since last fix
-                  t_elapsed = round(cumsum(t_seg), 1))
+  gps <- mutate(gps,
+                # elapsed time since last fix
+                t_seg = c(0, diff(lubridate::decimal_date(lubridate::ymd_hms(dt)))) * 525960,
+                t_elapsed = round(cumsum(t_seg), 1))
 
   if (plot_type == "dynamic") {
 
@@ -92,7 +85,7 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
     elapsedPal <- colorNumeric(palette = c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
                                            "#2D708EFF", "#25858EFF", "#1E9B8AFF", "#2BB07FFF",
                                            "#51C56AFF", "#85D54AFF", "#C2DF23FF", "#FDE725FF"),
-                               domain = gps@data$t_elapsed)
+                               domain = gps$t_elapsed)
 
     # Make bat icon list
     batIcons <- makeBatIconList()
@@ -137,9 +130,9 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
 
     # Add species legend and layer control
     p <- p %>%
-      addLegend("topleft", pal = sppPal, values = calls@data$spp,
+      addLegend("topleft", pal = sppPal, values = calls$spp,
                 title = "Species", opacity = 1) %>%
-      addLegend("bottomleft", pal = elapsedPal, values = gps@data$t_elapsed,
+      addLegend("bottomleft", pal = elapsedPal, values = gps$t_elapsed,
                 title = paste("Elapsed", "<br>", "time (min)"), opacity = 1) %>%
       addLayersControl(baseGroups = c("Terrain", "Aerial"),
                        overlayGroups = c("Good GPS fix", "Bad GPS fix"),
@@ -156,20 +149,15 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
       install.packages("ggmap")
       }
 
-    gps_df <- data.frame(lat = sp::coordinates(gps)[, 2],
-                         lon = sp::coordinates(gps)[, 1],
-                         gps@data)
-    call_df <- data.frame(lat = sp::coordinates(calls)[, 2],
-                        lon = sp::coordinates(calls)[, 1],
-                        calls@data)
+    gps_df <- gps %>% cbind(., st_coordinates(.))
+    call_df <- calls %>% cbind(., st_coordinates(.))
 
-    bb_summary <- apply(sp::coordinates(gps), 2, range)
-    bb <- ggmap::make_bbox(bb_summary[, 1], bb_summary[, 2])
+    bb <- st_bbox(gps); names(bb) <- c("left", "bottom", "right", "top")
     bm <- ggmap::get_map(bb, maptype = "terrain")
 
     ggplot2::theme_set(ggplot2::theme_classic(base_size = 16))
     p <- ggmap::ggmap(bm, maprange = FALSE, extent = "device",
-          base_layer = ggplot2::ggplot(ggplot2::aes(x = lon, y = lat), data = gps_df)) +
+          base_layer = ggplot2::ggplot(ggplot2::aes(x = X, y = Y), data = gps_df)) +
         ggplot2::geom_point(size = 0.5) +
         ggplot2::geom_point(data = call_df, ggplot2::aes(fill = spp),
                             shape = 21, size = 2, color = "black") +
