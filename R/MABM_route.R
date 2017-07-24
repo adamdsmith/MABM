@@ -39,8 +39,6 @@
 #'  directory and files, if they exist.
 #' @param plot logical (default = FALSE) indicating whether to plot the processed route using
 #'  \code{\link{plot_MABM_route}}
-#' @import sp
-#' @importFrom rgdal writeOGR
 #' @export
 MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                        for_import = TRUE, keep_output = FALSE, overwrite = FALSE,
