@@ -17,9 +17,9 @@
 #'
 #'  If \code{keep_output = TRUE}, the function creates a list containing (1) a \code{data.frame}
 #'  ('final_calls') containing information on the bat detections, (2) a
-#'  \code{\link[sp]{SpatialPointsDataFrame-class}} ('route_pt') of all GPS fixes along the route, (3) a
-#'  \code{\link[sp]{SpatialLinesDataFrame-class}} of these GPS fixes, and (4) a
-#'  \code{\link[sp]{SpatialPointsDataFrame-class}} ('call_pt') of all bat detections. This is handy if the
+#'  \code{\link[sf]{sf}} ('route_pt') of all GPS fixes along the route, (3) a
+#'  \code{\link[sf]{sf}} of these GPS fixes, and (4) a
+#'  \code{\link[sf]{sf}} ('call_pt') of all bat detections. This is handy if the
 #'  user wants to conduct further investigations in R. To access this output, remember to
 #'  assign the function output to an R object.
 #'
@@ -301,6 +301,6 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         print(p)
     }
 
-    if (keep_output) return(list(final_calls = calls, route_pt = GPS_spdf,
-                                 route_line = GPS_sldf, call_pt = calls_spdf))
+    if (keep_output) return(list(final_calls = calls, route_pt = GPS_sf,
+                                 route_line = GPS_lsf, call_pt = calls_sf))
 }
