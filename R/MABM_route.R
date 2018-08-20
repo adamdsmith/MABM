@@ -85,7 +85,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     route_date <- substr(basename(calls), 1, 8)
 
     # Extract file input directory
-    trunc <- sapply(gregexpr("\\\\", calls), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", calls), utils::tail, 1)
     in_dir <- substr(calls, 1, trunc)
 
     # Assume GPS text file in same directory and called `gps.txt`
@@ -201,7 +201,11 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
             arrange(order) # Ensure ordered chronologically
     } else {
         calls <- cbind(select(calls, -dec_min), select(GPS, -call_id), GPS_diff = NA,
-                            row.names = NULL)
+                            row.names = NULL) %>%
+        # Add/extract call date/time
+        mutate(time = parse_time(call_id),
+               date = as.Date(route_date, format = "%Y%m%d") +
+                   as.difftime(ifelse(lubridate::hour(lubridate::hms(time)) > 23, 1, 0), units = "days"))
     }
 
     ## Rearranges columns for importGPS into MABM MS Access database (column order

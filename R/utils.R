@@ -140,3 +140,8 @@ two_deep <- function(dir) {
     dirs <- list.dirs(dir, recursive = FALSE)
     lapply(dirs, function(i) list.dirs(i, recursive = FALSE)) %>% unlist()
 }
+
+parse_time <- function(call_id) {
+    call_id <- formatC(call_id, width = 6, format = "d", flag = "0")
+    gsub("(\\d{2})(?=\\d{2})", "\\1:", call_id, perl = TRUE)
+}
