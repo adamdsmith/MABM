@@ -44,7 +44,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                        for_import = TRUE, keep_output = FALSE, overwrite = FALSE,
                        plot = FALSE) {
 
-    lat = lon = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
+    lat = lon = time = dt = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
 
     # Ask to set MABM root directory
     if (is.null(getOption("MABM_home"))) {
@@ -57,7 +57,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
     ## Prompt user to specify route name (site_Name in Access)
     # Load sites
-    sites <- read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE,
+    sites <- utils::read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE,
                       stringsAsFactors = FALSE)
     colons <- ifelse(grepl("\\d", substr(sites$Site_abbr, nchar(sites$Site_abbr), nchar(sites$Site_abbr))),
                      ": ", "")
@@ -120,7 +120,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                                    col_types = "_ccncc_", skip = n_skip)
         } else {
             GPS_string <- readr::read_lines(GPS)
-            GPS_start <- head(n_skip, -1) + 1 # Drop last entry
+            GPS_start <- utils::head(n_skip, -1) + 1 # Drop last entry
             GPS_end <- (grep("H R", GPS_string) - 2)[-1] # Two rows before start of datum info
             # Drop empty segments
             keep <- which(GPS_end >= GPS_start)
@@ -234,7 +234,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
 
     # Write final bat call data file with associated GPS information
     csv_name <- paste0("Calls_", out_name, "_final.csv")
-    if (for_import) write.csv(import, file = file.path(dirname(in_dir), csv_name), quote = FALSE)
+    if (for_import) utils::write.csv(import, file = file.path(dirname(in_dir), csv_name), quote = FALSE)
 
     if (gps) {
 

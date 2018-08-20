@@ -1,6 +1,6 @@
 inst_pkg <- function(pkgs) {
-    pkg_miss <- pkgs[which(!pkgs %in% installed.packages()[, 1])]
-    if (length(pkg_miss) > 0) install.packages(pkg_miss)
+    pkg_miss <- pkgs[which(!pkgs %in% utils::installed.packages()[, 1])]
+    if (length(pkg_miss) > 0) utils::install.packages(pkg_miss)
 }
 
 Mode <- function(x) {
@@ -10,6 +10,7 @@ Mode <- function(x) {
 
 gps_QC <- function(gps) {
 
+    time = NULL # global variable binding
     # Create temporary data frame
     tmp <- data.frame(date = strptime(gps$date, format = "%Y-%m-%d"),
                       time = lubridate::hms(gps$time))

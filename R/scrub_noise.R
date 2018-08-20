@@ -29,7 +29,7 @@ scrub_noise <- function(mult_folder = TRUE, BCID = NULL) {
         stop("The file does not exist or the path was specified incorrectly.  Try again.")
 
     # Extract file input directory
-    trunc <- sapply(gregexpr("\\\\", calls), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", calls), utils::tail, 1)
     in_dir <- substr(calls, 1, trunc)
 
     ## Call .xls file read and formatting

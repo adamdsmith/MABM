@@ -5,3 +5,5 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^README-figs$
+^Script_devel$
+^Demos$

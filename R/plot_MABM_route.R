@@ -35,7 +35,7 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
 
   plot_type <- match.arg(plot_type)
 
-  GPS_diff = t_seg = "." = NULL  # Variable "declaration" for R CMD check
+  GPS_diff = t_seg = "." = dt = X = Y = spp = NULL  # Variable "declaration" for R CMD check
 
   #Create a custom color scale to consistently display species, if requested
   bat_fills <- c("orange3", "orange3", "sienna", "red2", "forestgreen", "forestgreen",
@@ -141,11 +141,11 @@ plot_MABM_route <- function(bad_gps = 5, gps = NULL, plot_type = c("dynamic", "s
 
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
           message("The ggplot2 package is needed for static maps; installing from CRAN.")
-          install.packages("ggplot2")
+          utils::install.packages("ggplot2")
       }
       if (!requireNamespace("ggmap", quietly = TRUE)) {
       message("The ggmap package is needed for static maps; installing from CRAN.")
-      install.packages("ggmap")
+      utils::install.packages("ggmap")
       }
 
     gps_df <- gps %>% cbind(., st_coordinates(.))

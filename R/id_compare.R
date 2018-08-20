@@ -45,7 +45,7 @@ id_compare <- function() {
     EC_calls$EC_spp <- gsub("Unknown", "UNKN", EC_calls$EC_spp)
 
     # Extract EC file input directory (assumes BCID is here too)
-    trunc <- sapply(gregexpr("\\\\", ECcalls), tail, 1)
+    trunc <- sapply(gregexpr("\\\\", ECcalls), utils::tail, 1)
     in_dir <- substr(ECcalls, 1, trunc)
 
     ## BCID .xls file read and formatting
