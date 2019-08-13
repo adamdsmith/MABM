@@ -239,8 +239,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     if (gps) {
 
         ## Create point shapefile of all GPS locations (SavedRoute)
-        GPS_sf <- st_as_sf(GPS, coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84") %>%
-            mutate(dt = as.character(dt))
+        GPS_sf <- mutate(GPS, dt = as.character(dt)) %>%
+            st_as_sf(coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84")
         name <- paste0("SavedRoute_", out_name)
         st_write(GPS_sf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
@@ -251,8 +251,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         st_write(GPS_lsf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
         ## Create point shapefile of locations with bat calls (Calls)
-        calls_sf <- st_as_sf(calls, coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84") %>%
-            mutate(dt = as.character(dt))
+        calls_sf <- mutate(calls, dt = as.character(dt)) %>%
+            st_as_sf(coords = c("lon", "lat"), crs = "+proj=longlat +datum=WGS84")
         name <- paste0("Calls_", out_name)
         st_write(calls_sf, file.path(out_dir, paste0(name, ".shp")), quiet = TRUE)
 
