@@ -194,7 +194,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         time_diffs <- outer(calls$dec_min, GPS$dec_min, "-")
         # Get index of the closest GPS fix
         nearest_fix <- apply(time_diffs, 1, function(x) which.min(abs(x)))
-        GPS_diff <- diag(time_diffs[, nearest_fix])
+        GPS_diff <- diag(time_diffs[, nearest_fix, drop = FALSE])
 
         calls <- cbind(select(calls, -dec_min), select(GPS, -call_id)[nearest_fix, ],
                        GPS_diff = GPS_diff, row.names = NULL) %>%
@@ -218,7 +218,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         # Replace NAs with blanks to play nicely with conversion in Access
         # To do so requires the conversion of all fields to text
         # NOTE: `time` is the time of the GPS fix, not the detection
-        import <- sapply(import, as.character)
+        import <- mutate_all(import, as.character)
         import[is.na(import)] <- ""
     }
 
