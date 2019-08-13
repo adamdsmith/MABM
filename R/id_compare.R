@@ -18,7 +18,7 @@ id_compare <- function() {
 
     EC_spp = BCID_spp = agree = filename = NULL # Variable "declaration" for R CMD check
 
-    inst_pkg("xlsx")
+    if (!requireNamespace("openxlsx", quietly = TRUE)) utils::install.packages("openxlsx", quiet = TRUE)
 
     ## EchoClass .xls file read and formatting
     ECcalls <- utils::choose.files(default = "*.xls",

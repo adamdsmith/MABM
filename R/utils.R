@@ -1,8 +1,3 @@
-inst_pkg <- function(pkgs) {
-    pkg_miss <- pkgs[which(!pkgs %in% utils::installed.packages()[, 1])]
-    if (length(pkg_miss) > 0) utils::install.packages(pkg_miss)
-}
-
 Mode <- function(x) {
     ux <- unique(x)
     ux[which.max(tabulate(match(x, ux)))]
