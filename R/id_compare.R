@@ -80,7 +80,7 @@ id_compare <- function() {
 
 
     ## Save it
-    xlsx::write.xlsx(comparison, paste0(in_dir, "ComEchoBCID.xls"),
-                     sheetName = "EchoClass vs. BCID", row.names=FALSE)
+    openxlsx::write.xlsx(comparison, paste0(in_dir, "ComEchoBCID.xlsx"),
+                         sheetName = "EchoClass vs. BCID", row.names=FALSE)
 
 }
