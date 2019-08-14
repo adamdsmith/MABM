@@ -149,7 +149,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                                 as.numeric(substring(lon, 2))),
                    date = lubridate::ymd(date),
                    dt = lubridate::ymd_hms(paste(date, time)),
-                   call_id = as.integer(gsub(":", "", time)),
+                   call_id = gsub(":", "", time),
+                   # call_id = as.integer(gsub(":", "", time)),
                    dec_min = dec_min(call_id)) %>%
             arrange(dt) %>% as.data.frame()
         GPS$order = 1:nrow(GPS)
@@ -181,7 +182,8 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     # Restructure data
     # transform filename to call ID
     calls <- mutate(calls,
-                    call_id = as.integer(gsub("[.]", "", substr(filename, 5, 11))),
+                    call_id = gsub("[.]", "", substr(filename, 5, 11)),
+                    # call_id = as.integer(gsub("[.]", "", substr(filename, 5, 11))),
                     dec_min = dec_min(call_id))
 
     if (gps) {
@@ -205,7 +207,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
         # Add/extract call date/time
         mutate(time = parse_time(call_id),
                date = as.Date(route_date, format = "%Y%m%d") +
-                   as.difftime(ifelse(lubridate::hour(lubridate::hms(time)) > 23, 1, 0), units = "days"))
+                   as.difftime(ifelse(lubridate::hour(lubridate::hms(time)) < 12, 1, 0), units = "days"))
     }
 
     ## Rearranges columns for importGPS into MABM MS Access database (column order

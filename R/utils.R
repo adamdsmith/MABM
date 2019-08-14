@@ -125,7 +125,14 @@ sequence <- function(start, end) {
 
 clean_tabs <- function(x) gsub("[\t\n]", "", x)
 
-dec_min <- function(call_id) as.numeric(substr(call_id,1,4)) + as.numeric(substr(call_id, 5,6))/60
+dec_min <- function(call_id) {
+    hh <- substr(call_id, 1, 2)
+    # Just in case a few GPS or calls go past midnight
+    hh <- ifelse(as.integer(hh) < 12, as.character(as.integer(hh) + 24), hh)
+    mm <- substr(call_id, 3, 4)
+    ss <- substr(call_id, 5, 6)
+    as.numeric(paste0(hh, mm)) + as.numeric(ss)/60
+}
 
 yesno <- function() {
     ans <- substr(readline(prompt="Would you like to set a MABM root directory (y/n)?"), 1L, 1L)
