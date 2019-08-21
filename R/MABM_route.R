@@ -44,7 +44,7 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
                        for_import = TRUE, keep_output = FALSE, overwrite = FALSE,
                        plot = FALSE) {
 
-    lat = lon = time = dt = filename = "." = call_id = NULL # Variable "declaration" for R CMD check
+    lat = lon = time = dt = filename = "." = call_id = Site = Site_abbr = NULL # Variable "declaration" for R CMD check
 
     # Ask to set MABM root directory
     if (is.null(getOption("MABM_home"))) {
@@ -58,10 +58,11 @@ MABM_route <- function(route_name = NULL, scrub = TRUE, gps = TRUE,
     ## Prompt user to specify route name (site_Name in Access)
     # Load sites
     sites <- utils::read.csv(system.file("extdata", "site_list.csv", package = "MABM"), header = TRUE,
-                      stringsAsFactors = FALSE)
+                      stringsAsFactors = FALSE) %>%
+        arrange(Site, Site_abbr)
     colons <- ifelse(grepl("\\d", substr(sites$Site_abbr, nchar(sites$Site_abbr), nchar(sites$Site_abbr))),
                      ": ", "")
-    menu_items <- sort(paste0(sites$Site, colons, sites$Site_desc, " (", sites$Site_abbr, ")"))
+    menu_items <- paste0(sites$Site, colons, sites$Site_desc, " (", sites$Site_abbr, ")")
     if (is.null(route_name)) {
         route_name <- utils::select.list(menu_items, title="Choose the MABM route", multiple = FALSE, graphics = TRUE)
         # Drop the full location
